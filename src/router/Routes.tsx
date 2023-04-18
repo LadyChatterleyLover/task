@@ -1,3 +1,4 @@
+import React from 'react'
 import { useRoutes } from 'react-router'
 import Login from '../pages/login/Login'
 import Layouts from '../pages/layouts/Layouts'
@@ -9,7 +10,7 @@ import Message from '../pages/message/Message'
 import Project from '../pages/project/Project'
 
 const Routes = () => {
-  let element = useRoutes([
+  const element = useRoutes([
     {
       path: '/',
       element: <Layouts />,

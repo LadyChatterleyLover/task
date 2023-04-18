@@ -1,9 +1,11 @@
+import React from 'react'
 import { useEffect, useState, forwardRef, useImperativeHandle } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Modal, Progress, message } from 'antd'
 import api from '../../api'
 import { ProjectItem } from '../../types/project'
+import { TaskItem } from '../../types/task'
 
 interface Props {
   setPath: (val: string) => void
@@ -11,7 +13,7 @@ interface Props {
 
 const PorjectList = forwardRef((props: Props, ref) => {
   const { setPath } = props
-  const user = JSON.parse(localStorage.getItem('task-user')!)
+  const user = JSON.parse(localStorage.getItem('task-user') as string)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [projectList, setProjectList] = useState<ProjectItem[]>([])
@@ -83,7 +85,7 @@ const PorjectList = forwardRef((props: Props, ref) => {
   }, [])
 
   useEffect(() => {
-    const value = searchParams.get('id')!
+    const value = searchParams.get('id') as string
     setCurrent(+value)
   }, [searchParams])
 
@@ -110,10 +112,10 @@ const PorjectList = forwardRef((props: Props, ref) => {
                     <div className="mb-4 flex items-center">
                       <div>我的:</div>
                       <div className="ml-1">
-                        {item.myTasks!.filter((i) => i.completed).length}/{item.myTasks!.length}
+                        {(item.myTasks as TaskItem[]).filter((i) => i.completed).length}/{item.myTasks?.length}
                       </div>
                       <div className="flex-1 relative top-[3px] left-1">
-                        <Progress percent={item.myTasks!.filter((i) => i.completed).length / item.myTasks!.length}></Progress>
+                        <Progress percent={(item.myTasks as TaskItem[]).filter((i) => i.completed).length / (item.myTasks as TaskItem[]).length}></Progress>
                       </div>
                     </div>
                     <div className="mb-4 flex items-center">

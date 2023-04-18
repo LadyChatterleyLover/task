@@ -1,3 +1,4 @@
+import React from 'react'
 import { useEffect, useState } from 'react'
 import { LoginUser } from '../../api/modules/user/types'
 import { Avatar } from 'antd'
@@ -6,7 +7,7 @@ const UserInfo = () => {
   const [userInfo, setUserInfo] = useState<LoginUser['user']>()
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('task-user')!) as LoginUser['user']
+    const user = JSON.parse(localStorage.getItem('task-user') as string) as LoginUser['user']
     setUserInfo(user)
   }, [])
   return (

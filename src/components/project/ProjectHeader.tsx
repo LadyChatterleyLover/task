@@ -1,3 +1,4 @@
+import React from 'react'
 import { Avatar } from 'antd'
 import { ProjectItem } from '../../types/project'
 import { LoginUser } from '../../api/modules/user/types'
@@ -9,7 +10,7 @@ interface Props {
 
 const ProjectHeader = (props: Props) => {
   const { project } = props
-  const user: LoginUser['user'] = JSON.parse(localStorage.getItem('task-user')!)
+  const user: LoginUser['user'] = JSON.parse(localStorage.getItem('task-user') as string)
   return project ? (
     <div className="flex items-center justify-between">
       <div className="font-bold text-3xl">{project.name}</div>

@@ -1,3 +1,4 @@
+import React from 'react'
 import { useNavigate } from 'react-router'
 import { Card, Form, Input, Button, message } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
@@ -6,7 +7,7 @@ import api from '../../api'
 const Login = () => {
   const navigate = useNavigate()
 
-  const onFinish = (values: any) => {
+  const onFinish = (values: { username: string; password: string }) => {
     api.user.login(values).then((res) => {
       if (res.code === 200) {
         message.success(res.msg)

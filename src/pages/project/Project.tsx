@@ -1,3 +1,4 @@
+import React from 'react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { ProjectItem } from '../../types/project'
@@ -8,7 +9,6 @@ import ProjectTable from '../../components/project/ProjectTable'
 const Project = () => {
   const [searchParams] = useSearchParams()
   const [project, setProject] = useState<ProjectItem>()
-  const [id, setId] = useState(-1)
 
   const getProject = (value: string) => {
     api.project.getProject(+value).then((res) => {
@@ -20,16 +20,15 @@ const Project = () => {
   }
 
   useEffect(() => {
-    const value = searchParams.get('id')!
-    setId(+value)
+    const value = searchParams.get('id') as string
     getProject(value)
   }, [searchParams])
 
   return (
     <div className="p-[30px]">
-      <ProjectHeader project={project!} />
-      <div>
-        <ProjectTable project={project} />
+      <ProjectHeader project={project as ProjectItem} />
+      <div className="mt-5">
+        <ProjectTable project={project as ProjectItem} />
       </div>
     </div>
   )
