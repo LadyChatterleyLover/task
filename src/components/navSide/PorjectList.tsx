@@ -111,21 +111,12 @@ const PorjectList = forwardRef((props: Props, ref) => {
                 {item.flag ? (
                   <div className="text-xs ml-7">
                     <div className="mb-4 flex items-center">
-                      <div>我的:</div>
-                      <div className="ml-1">
-                        {(item.myTasks as TaskItem[]).filter((i) => i.completed).length}/{item.myTasks?.length}
-                      </div>
-                      <div className="flex-1 relative top-[3px] left-1">
-                        <Progress percent={(item.myTasks as TaskItem[]).filter((i) => i.completed).length / (item.myTasks as TaskItem[]).length}></Progress>
-                      </div>
-                    </div>
-                    <div className="mb-4 flex items-center">
                       <div>全部:</div>
                       <div className="ml-1">
-                        {item.tasks.filter((i) => i.completed).length}/{item.tasks.length}
+                        {item.tasks.filter((i) => i.status === 4).length}/{item.tasks.length}
                       </div>
                       <div className="flex-1 relative top-[3px] left-1">
-                        <Progress percent={item.tasks.filter((i) => i.completed).length / item.tasks.length}></Progress>
+                        <Progress percent={item.tasks.filter((i) => i.status === 4).length / item.tasks.length}></Progress>
                       </div>
                     </div>
                   </div>
