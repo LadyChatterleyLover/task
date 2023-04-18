@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, TableColumnProps } from 'antd'
+import { Table, Tag, TableColumnProps } from 'antd'
 import { ProjectItem } from '../../types/project'
 import { TaskItem } from '../../types/task'
 
@@ -33,7 +33,19 @@ const ProjectTable = (props: Props) => {
       title: '优先级',
       dataIndex: 'level',
       key: 'level',
-      align: 'center'
+      align: 'center',
+      render: (text) => {
+        if (text === 'P1') {
+          return <Tag color="red">{text}</Tag>
+        }
+        if (text === 'P2') {
+          return <Tag color="blue">{text}</Tag>
+        }
+
+        if (text === 'P3') {
+          return <Tag color="cyan">{text}</Tag>
+        }
+      }
     },
     {
       title: '负责人',
