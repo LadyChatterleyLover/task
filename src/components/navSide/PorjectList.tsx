@@ -99,13 +99,14 @@ const PorjectList = forwardRef((props: Props, ref) => {
         ? projectList.map((item) => {
             return (
               <div key={item.id}>
-                <div className="flex items-center py-2 px-1 mb-3 cursor-pointer" style={{ background: current === item.id ? '#fff' : 'inherit' }}>
+                <div className="relative flex items-center py-2 px-1 mb-3 cursor-pointer" style={{ background: current === item.id ? '#fff' : 'inherit' }}>
                   <div className="flex items-center" onClick={(e) => clickProject(e, item)}>
                     <CaretRightOutlined style={{ color: '#999' }} />
                   </div>
                   <div className="ml-2" onClick={() => clickItem(item)}>
                     {item.name}
                   </div>
+                  <div className="absolute right-3">{item.tasks.length ? item.tasks.length : null}</div>
                 </div>
                 {item.flag ? (
                   <div className="text-xs ml-7">

@@ -30,7 +30,6 @@ const ProjectTable = (props: Props) => {
         if (res.code === 200) {
           setTaskList(res.data)
         }
-        console.log('res', res.data)
       })
   }
 
@@ -158,9 +157,11 @@ const ProjectTable = (props: Props) => {
       key: 'name',
       align: 'center',
       render: (_, record) => (
-        <div className="flex items-center justify-center">
-          <Setting task={record} clickItMenu={clickItMenu} />
-          <div className="ml-2">{record.name}</div>
+        <div className="flex items-center">
+          <div className="w-[45%] flex justify-end">
+            <Setting task={record} clickItMenu={clickItMenu} />
+          </div>
+          <div className="ml-2 flex-1 flex justify-start">{record.name}</div>
         </div>
       )
     },
@@ -210,11 +211,13 @@ const ProjectTable = (props: Props) => {
       align: 'center',
       render: (_, r, index) => (
         <div>
-          {project.tasks[index].users.map((item) => (
-            <span key={item.id} className="mr-1">
-              {item.username}
-            </span>
-          ))}
+          {project.tasks[index] &&
+            project.tasks[index].users &&
+            project.tasks[index].users.map((item) => (
+              <span key={item.id} className="mr-1">
+                {item.username}
+              </span>
+            ))}
         </div>
       )
     },
