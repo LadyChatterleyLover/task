@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Table, Tag, TableColumnProps } from 'antd'
+import cloneDeep from 'lodash-es/cloneDeep'
+import dayjs from 'dayjs'
 import { ProjectItem } from '../../types/project'
 import { TaskItem } from '../../types/task'
 
@@ -8,7 +10,48 @@ interface Props {
 }
 
 const ProjectTable = (props: Props) => {
-  const { project } = props
+  const { project: propProject } = props
+  const [project, setProject] = useState<ProjectItem>(cloneDeep(propProject))
+  const [currentTime, setCurrentTime] = useState(dayjs())
+
+  const diffTime = (time: string) => {
+    const endTime = dayjs(time)
+    const diff = endTime.diff(currentTime, 'millisecond')
+    const days = Math.floor(diff / 86400000) // 获取天数
+    const hours = Math.floor((diff % 86400000) / 3600000) // 获取小时数
+    const minutes = Math.floor((diff % 3600000) / 60000) // 获取分钟数
+    const seconds = Math.floor((diff % 60000) / 1000) // 获取秒数
+    if (diff > 0) {
+      if (days >= 1) {
+        return (
+          <div>
+            {days !== 0 ? days + 'd,' : null}
+            {hours}h
+          </div>
+        )
+      }
+      return (
+        <Tag color="orange">
+          {days !== 0 ? days + 'd,' : null}
+          {hours < 10 ? '0' + hours : hours}:{minutes < 10 ? '0' + minutes : minutes}:{seconds < 10 ? '0' + seconds : seconds}
+        </Tag>
+      )
+    } else {
+      if (days === -1) {
+        return (
+          <Tag color="red">
+            {hours}:{minutes}:{seconds}
+          </Tag>
+        )
+      }
+      return (
+        <Tag color="red">
+          {days !== 0 ? days + 'd' : null},{hours}h
+        </Tag>
+      )
+    }
+  }
+
   const columns: TableColumnProps<TaskItem>[] = [
     {
       title: '#',
@@ -34,6 +77,7 @@ const ProjectTable = (props: Props) => {
       dataIndex: 'level',
       key: 'level',
       align: 'center',
+      sorter: true,
       render: (text) => {
         if (text === 'P1') {
           return <Tag color="red">{text}</Tag>
@@ -61,8 +105,36 @@ const ProjectTable = (props: Props) => {
           ))}
         </div>
       )
+    },
+    {
+      title: '到期时间',
+      dataIndex: 'endTime',
+      key: 'endTime',
+      align: 'center',
+      render: (_, record) => {
+        return record.diffTime
+      }
     }
   ]
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(dayjs())
+    }, 1000)
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (propProject) {
+      const cloneProject = cloneDeep(propProject)
+      cloneProject.tasks.map((item) => {
+        item.diffTime = diffTime(item.endTime)
+      })
+      setProject({ ...cloneProject })
+    }
+  }, [currentTime, propProject])
+
   return project ? <Table rowKey="id" dataSource={project.tasks} columns={columns}></Table> : null
 }
 

@@ -10,4 +10,5 @@ export interface TaskItem {
   updateAt: string
   completed: boolean
   users: LoginUser['user'][]
+  diffTime?: JSX.Element
 }
