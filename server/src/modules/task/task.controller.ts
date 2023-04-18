@@ -22,14 +22,25 @@ export class TaskController {
     return await this.taskService.create(createTaskDto)
   }
 
-  @Get()
-  async findAll() {
-    return await this.taskService.findAll()
+  @Post('list')
+  async findAll(
+    @Body() params: { current: number; size: number; keyword: string },
+  ) {
+    return await this.taskService.findAll(
+      params.current,
+      params.size,
+      params.keyword,
+    )
   }
 
   @Post('detail')
   async findOne(@Body() params: { projectId: number; userId: number }) {
     return this.taskService.findOne(params.projectId, params.userId)
+  }
+
+  @Post('search')
+  async search(@Body() params: { keyword: string }) {
+    return this.taskService.search(params.keyword)
   }
 
   @Patch(':id')

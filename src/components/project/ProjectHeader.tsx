@@ -101,6 +101,7 @@ const ProjectHeader = (props: Props) => {
           </div>
         </div>
       ) : null}
+
       <Modal open={visible} title="添加任务" destroyOnClose onOk={addTask} onCancel={() => setVisible(false)}>
         <Form form={form} initialValues={{ users: [user.id] }}>
           <Form.Item name="name" rules={[{ required: true, message: '任务名称不能为空' }]}>

@@ -13,5 +13,10 @@ export default {
   },
   deleteTask(id: number) {
     return remove(`/task/${id}`)
+  },
+  searchTask(keyword: string) {
+    return post('/task', {
+      keyword
+    })
   }
 }

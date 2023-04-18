@@ -52,13 +52,18 @@ export class TaskService {
     }
   }
 
-  async findAll() {
+  async findAll(current: number, size: number, keyword: string) {
     const res = await this.taskRepository
       .createQueryBuilder('task')
       .leftJoinAndSelect('task.users', 'users')
       .leftJoinAndSelect('task.project', 'project')
-      .getMany()
-    res.map((item) => {
+      .where('task.name LIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('task.id LIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('task.desc LIKE :keyword', { keyword: `%${keyword}%` })
+      .skip((current - 1) * size)
+      .take(size)
+      .getManyAndCount()
+    res[0].map((item) => {
       item.users.map((user) => {
         delete user.password
       })
@@ -66,7 +71,8 @@ export class TaskService {
     return {
       code: 200,
       msg: '获取成功',
-      data: res,
+      data: res[0],
+      total: res[1],
     }
   }
 
@@ -136,6 +142,20 @@ export class TaskService {
         code: 500,
         msg: '删除失败',
       }
+    }
+  }
+
+  async search(keyword: string) {
+    const data = await this.taskRepository
+      .createQueryBuilder('task')
+      .where('task.name LIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('task.id LIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('task.desc LIKE :keyword', { keyword: `%${keyword}%` })
+      .getMany()
+    return {
+      code: 200,
+      msg: '查询成功',
+      data,
     }
   }
 }
