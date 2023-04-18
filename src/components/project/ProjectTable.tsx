@@ -1,18 +1,35 @@
 import React, { useState, useEffect } from 'react'
 import { Table, Tag, TableColumnProps } from 'antd'
-import cloneDeep from 'lodash-es/cloneDeep'
 import dayjs from 'dayjs'
 import { ProjectItem } from '../../types/project'
 import { TaskItem } from '../../types/task'
+import Setting from './Setting'
+import api from '../../api'
+import { LoginUser } from '../../api/modules/user/types'
 
 interface Props {
   project: ProjectItem
 }
 
 const ProjectTable = (props: Props) => {
-  const { project: propProject } = props
-  const [project, setProject] = useState<ProjectItem>(cloneDeep(propProject))
+  const { project } = props
+  const user: LoginUser['user'] = JSON.parse(localStorage.getItem('task-user') as string)
   const [currentTime, setCurrentTime] = useState(dayjs())
+  const [taskList, setTaskList] = useState<TaskItem[]>([])
+
+  const getTaskDetail = () => {
+    api.task
+      .getTaskDetail({
+        projectId: project.id,
+        userId: user.id
+      })
+      .then((res) => {
+        if (res.code === 200) {
+          setTaskList(res.data)
+        }
+        console.log('res', res.data)
+      })
+  }
 
   const diffTime = (time: string) => {
     const endTime = dayjs(time)
@@ -40,15 +57,34 @@ const ProjectTable = (props: Props) => {
       if (days === -1) {
         return (
           <Tag color="red">
-            {hours}:{minutes}:{seconds}
+            {Math.abs(hours) < 10 ? '-0' + Math.abs(hours) : hours}:{Math.abs(minutes) < 10 ? '0' + Math.abs(minutes) : Math.abs(minutes)}:
+            {Math.abs(seconds) < 10 ? '0' + Math.abs(seconds) : Math.abs(seconds)}
           </Tag>
         )
       }
       return (
         <Tag color="red">
-          {days !== 0 ? days + 'd' : null},{hours}h
+          {days !== 0 ? days + 'd, ' : null}
+          {Math.abs(hours)}h
         </Tag>
       )
+    }
+  }
+
+  const renderStatus = (status: number) => {
+    switch (status) {
+      case 0:
+        return <Tag color="#ff7070">待处理</Tag>
+      case 1:
+        return <Tag color="#fc984b">进行中</Tag>
+      case 2:
+        return <Tag color="#2f99ec">待测试</Tag>
+      case 3:
+        return <Tag color="#0bc037">已完成</Tag>
+      case 4:
+        return <Tag color="gold">已取消</Tag>
+      default:
+        break
     }
   }
 
@@ -63,7 +99,13 @@ const ProjectTable = (props: Props) => {
       title: '任务名称',
       dataIndex: 'name',
       key: 'name',
-      align: 'center'
+      align: 'center',
+      render: (_, record) => (
+        <div className="flex items-center justify-center">
+          <Setting task={record} />
+          <div className="ml-2">{record.name}</div>
+        </div>
+      )
     },
     {
       title: '列表',
@@ -71,6 +113,13 @@ const ProjectTable = (props: Props) => {
       key: 'project',
       align: 'center',
       render: () => <div>{project.name}</div>
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      align: 'center',
+      render: (_, record) => renderStatus(record.status)
     },
     {
       title: '优先级',
@@ -96,9 +145,9 @@ const ProjectTable = (props: Props) => {
       dataIndex: 'users',
       key: 'users',
       align: 'center',
-      render: (_, record: TaskItem) => (
+      render: (_, r, index) => (
         <div>
-          {record.users.map((item) => (
+          {project.tasks[index].users.map((item) => (
             <span key={item.id} className="mr-1">
               {item.username}
             </span>
@@ -126,16 +175,21 @@ const ProjectTable = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    if (propProject) {
-      const cloneProject = cloneDeep(propProject)
-      cloneProject.tasks.map((item) => {
+    if (project) {
+      taskList.map((item) => {
         item.diffTime = diffTime(item.endTime)
       })
-      setProject({ ...cloneProject })
+      setTaskList([...taskList])
     }
-  }, [currentTime, propProject])
+  }, [currentTime, project])
 
-  return project ? <Table rowKey="id" dataSource={project.tasks} columns={columns}></Table> : null
+  useEffect(() => {
+    if (project) {
+      getTaskDetail()
+    }
+  }, [project])
+
+  return taskList.length ? <Table rowKey="id" dataSource={taskList} columns={columns}></Table> : null
 }
 
 export default ProjectTable

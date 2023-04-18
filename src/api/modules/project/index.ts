@@ -1,5 +1,5 @@
 import { ProjectItem } from '../../../types/project'
-import { get, post } from '../../request'
+import { get, post, patch } from '../../request'
 
 export default {
   getProjectList() {
@@ -10,5 +10,8 @@ export default {
   },
   getProject(id: number) {
     return get<ProjectItem[]>(`/project/${id}`)
+  },
+  updateProject(id: number, params: Partial<ProjectItem>) {
+    return patch(`/project/${id}`, params)
   }
 }

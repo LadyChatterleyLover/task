@@ -15,7 +15,6 @@ const Project = () => {
       if (res.code === 200) {
         setProject(res.data[0])
       }
-      console.log(res.data[0])
     })
   }
 

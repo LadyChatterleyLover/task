@@ -23,6 +23,9 @@ export class Task {
   @ManyToOne(() => Project, (project) => project.tasks)
   project: Project
 
+  @Column({ default: 0 })
+  status: number
+
   @Column()
   desc: string
 
@@ -34,9 +37,6 @@ export class Task {
 
   @Column({ default: 'P1' })
   level: string
-
-  @Column({ default: false })
-  completed: boolean
 
   @ManyToMany(() => User, (user) => user.tasks)
   @JoinTable({ name: 'tasks_users' })

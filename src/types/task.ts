@@ -5,6 +5,7 @@ export interface TaskItem {
   desc: string
   endTime: string
   id: number
+  status: number
   name: string
   startTime: string
   updateAt: string

@@ -27,9 +27,9 @@ export class TaskController {
     return await this.taskService.findAll()
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.taskService.findOne(+id)
+  @Post('detail')
+  async findOne(@Body() params: { projectId: number; userId: number }) {
+    return this.taskService.findOne(params.projectId, params.userId)
   }
 
   @Patch(':id')

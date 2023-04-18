@@ -70,8 +70,32 @@ export class TaskService {
     }
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} task`
+  async findOne(projectId: number, userId: number) {
+    const data = await this.taskRepository
+      .createQueryBuilder('task')
+      .leftJoinAndSelect('task.project', 'project')
+      .leftJoinAndSelect('task.users', 'users')
+      .where('project.id = :projectId', { projectId })
+      .andWhere('users.id = :userId', { userId })
+      .getMany()
+    return {
+      code: 200,
+      msg: '查询成功',
+      data,
+    }
+  }
+
+  async findById(id: number) {
+    const data = await this.taskRepository.findOne({
+      where: {
+        id,
+      },
+    })
+    return {
+      code: 200,
+      msg: '查询成功',
+      data,
+    }
   }
 
   async update(id: number, updateTaskDto) {
