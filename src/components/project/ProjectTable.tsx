@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { Table, Tag, TableColumnProps, message } from 'antd'
+import { Table, Tag, TableColumnProps, message, Modal } from 'antd'
 import dayjs from 'dayjs'
 import { ProjectItem } from '../../types/project'
 import { TaskItem } from '../../types/task'
 import Setting from './Setting'
 import api from '../../api'
 import { LoginUser } from '../../api/modules/user/types'
+import { ExclamationCircleFilled } from '@ant-design/icons'
+
+const { confirm } = Modal
 
 interface Props {
   project: ProjectItem
@@ -88,11 +91,44 @@ const ProjectTable = (props: Props) => {
     }
   }
 
-  const clickItMenu = (key: string, id: number) => {
+  const clickItMenu = (key: string, task: TaskItem) => {
     if (key.includes('#')) {
       api.task
-        .updateTask(id, {
+        .updateTask(task.id, {
           bgColor: key
+        })
+        .then((res) => {
+          if (res.code === 200) {
+            message.success(res.msg)
+            getTaskDetail()
+          } else {
+            message.error(res.msg)
+          }
+        })
+    } else if (key === 'del') {
+      confirm({
+        title: '删除任务',
+        icon: <ExclamationCircleFilled />,
+        content: `你确定要删除任务 【${task.name}】 吗?`,
+        okType: 'danger',
+        onOk() {
+          api.task.deleteTask(task.id).then((res) => {
+            if (res.code === 200) {
+              message.success(res.msg)
+              getTaskDetail()
+            } else {
+              message.error(res.msg)
+            }
+          })
+        },
+        onCancel() {
+          message.info('已取消删除')
+        }
+      })
+    } else {
+      api.task
+        .updateTask(task.id, {
+          status: +key
         })
         .then((res) => {
           if (res.code === 200) {

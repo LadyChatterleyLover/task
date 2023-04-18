@@ -5,7 +5,7 @@ import { CheckOutlined, DeleteOutlined } from '@ant-design/icons'
 
 interface Props {
   task: TaskItem
-  clickItMenu: (val: string, id: number) => void
+  clickItMenu: (val: string, task: TaskItem) => void
 }
 
 const Setting = (props: Props) => {
@@ -147,7 +147,7 @@ const Setting = (props: Props) => {
   ]
 
   const onClick: MenuProps['onClick'] = ({ key }) => {
-    clickItMenu(key, task.id)
+    clickItMenu(key, task)
   }
 
   return (
