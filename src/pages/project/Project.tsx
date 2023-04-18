@@ -25,7 +25,7 @@ const Project = () => {
 
   return (
     <div className="p-[30px]">
-      <ProjectHeader project={project as ProjectItem} />
+      <ProjectHeader project={project as ProjectItem} getProject={getProject} />
       <div className="mt-5">
         <ProjectTable project={project as ProjectItem} />
       </div>

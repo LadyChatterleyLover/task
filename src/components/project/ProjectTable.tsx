@@ -165,6 +165,12 @@ const ProjectTable = (props: Props) => {
       )
     },
     {
+      title: '任务描述',
+      dataIndex: 'desc',
+      key: 'desc',
+      align: 'center'
+    },
+    {
       title: '列表',
       dataIndex: 'project',
       key: 'project',

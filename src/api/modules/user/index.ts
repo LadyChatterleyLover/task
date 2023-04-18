@@ -1,5 +1,5 @@
 import { LoginUser } from './types'
-import { post } from '../../request'
+import { get, post } from '../../request'
 
 export default {
   login(params: { username: string; password: string }) {
@@ -7,5 +7,8 @@ export default {
   },
   register(params: { username: string; password: string }) {
     return post('/user/register', params)
+  },
+  userList() {
+    return get<LoginUser['user'][]>('/user')
   }
 }

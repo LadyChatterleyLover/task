@@ -35,7 +35,7 @@ export class Task {
   @Column()
   endTime: string
 
-  @Column()
+  @Column({ default: '' })
   bgColor: string
 
   @Column({ default: 'P1' })
