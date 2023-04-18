@@ -34,8 +34,23 @@ export class TaskController {
   }
 
   @Post('detail')
-  async findOne(@Body() params: { projectId: number; userId: number }) {
-    return this.taskService.findOne(params.projectId, params.userId)
+  async findOne(
+    @Body()
+    params: {
+      projectId: number
+      userId: number
+      current: number
+      size: number
+      keyword: string
+    },
+  ) {
+    return this.taskService.findOne(
+      params.projectId,
+      params.userId,
+      params.current,
+      params.size,
+      params.keyword,
+    )
   }
 
   @Post('search')

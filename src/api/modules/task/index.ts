@@ -2,7 +2,7 @@ import { TaskItem } from '../../../types/task'
 import { patch, post, remove } from '../../request'
 
 export default {
-  getTaskDetail(params: { projectId: number; userId: number }) {
+  getTaskDetail(params: { projectId: number; userId: number; current: number; size: number; keyword: string }) {
     return post<TaskItem[]>('/task/detail', params)
   },
   addTask(params: Partial<TaskItem>) {

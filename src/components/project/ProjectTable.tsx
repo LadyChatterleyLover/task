@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Table, Tag, TableColumnProps, message, Modal } from 'antd'
+import { Table, Tag, TableColumnProps, message, Modal, Pagination } from 'antd'
 import dayjs from 'dayjs'
 import { ProjectItem } from '../../types/project'
 import { TaskItem } from '../../types/task'
@@ -19,18 +19,36 @@ const ProjectTable = (props: Props) => {
   const user: LoginUser['user'] = JSON.parse(localStorage.getItem('task-user') as string)
   const [currentTime, setCurrentTime] = useState(dayjs())
   const [taskList, setTaskList] = useState<TaskItem[]>([])
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [size, setSize] = useState<number>(5)
+  const [total, setTotal] = useState<number>(0)
+  const [keyword, setKeyword] = useState<string>('')
 
   const getTaskDetail = () => {
     api.task
       .getTaskDetail({
         projectId: project.id,
-        userId: user.id
+        userId: user.id,
+        current: currentPage,
+        size,
+        keyword
       })
       .then((res) => {
         if (res.code === 200) {
           setTaskList(res.data)
+          setTotal(res.total as number)
         }
       })
+  }
+
+  const changeCurrent = (page: number, pageSize: number) => {
+    setCurrentPage(page)
+    setSize(pageSize)
+  }
+
+  const changeSize = (page: number, pageSize: number) => {
+    setCurrentPage(page)
+    setSize(pageSize)
   }
 
   const diffTime = (time: string) => {
@@ -253,9 +271,25 @@ const ProjectTable = (props: Props) => {
     if (project) {
       getTaskDetail()
     }
-  }, [project])
+  }, [project, currentPage, size])
 
-  return taskList.length ? <Table rowKey="id" dataSource={taskList} columns={columns} rowClassName={rowClassName}></Table> : null
+  return taskList.length ? (
+    <div>
+      <Table rowKey="id" dataSource={taskList} columns={columns} rowClassName={rowClassName} pagination={false}></Table>
+      <div className="flex justify-end mt-5">
+        <Pagination
+          total={total}
+          defaultPageSize={size}
+          pageSizeOptions={[5, 10, 20, 50]}
+          onChange={changeCurrent}
+          onShowSizeChange={changeSize}
+          showSizeChanger
+          showQuickJumper
+          showTotal={(total) => `共 ${total} 条`}
+        />
+      </div>
+    </div>
+  ) : null
 }
 
 export default ProjectTable

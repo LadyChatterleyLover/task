@@ -74,6 +74,7 @@ interface IResponseData<T> {
   data: T
   code: number
   msg: string
+  total?: number
 }
 
 //get请求
