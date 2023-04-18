@@ -10,6 +10,7 @@ export interface TaskItem {
   startTime: string
   updateAt: string
   completed: boolean
+  bgColor: string
   users: LoginUser['user'][]
   diffTime?: JSX.Element
 }

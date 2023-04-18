@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Table, Tag, TableColumnProps } from 'antd'
+import { Table, Tag, TableColumnProps, message } from 'antd'
 import dayjs from 'dayjs'
 import { ProjectItem } from '../../types/project'
 import { TaskItem } from '../../types/task'
@@ -34,10 +34,10 @@ const ProjectTable = (props: Props) => {
   const diffTime = (time: string) => {
     const endTime = dayjs(time)
     const diff = endTime.diff(currentTime, 'millisecond')
-    const days = Math.floor(diff / 86400000) // 获取天数
-    const hours = Math.floor((diff % 86400000) / 3600000) // 获取小时数
-    const minutes = Math.floor((diff % 3600000) / 60000) // 获取分钟数
-    const seconds = Math.floor((diff % 60000) / 1000) // 获取秒数
+    const days = Math.floor(diff / 86400000)
+    const hours = Math.floor((diff % 86400000) / 3600000)
+    const minutes = Math.floor((diff % 3600000) / 60000)
+    const seconds = Math.floor((diff % 60000) / 1000)
     if (diff > 0) {
       if (days >= 1) {
         return (
@@ -88,6 +88,27 @@ const ProjectTable = (props: Props) => {
     }
   }
 
+  const clickItMenu = (key: string, id: number) => {
+    if (key.includes('#')) {
+      api.task
+        .updateTask(id, {
+          bgColor: key
+        })
+        .then((res) => {
+          if (res.code === 200) {
+            message.success(res.msg)
+            getTaskDetail()
+          } else {
+            message.error(res.msg)
+          }
+        })
+    }
+  }
+
+  const rowClassName = (rocord: TaskItem) => {
+    return `bg-[${rocord.bgColor}]`
+  }
+
   const columns: TableColumnProps<TaskItem>[] = [
     {
       title: '#',
@@ -102,7 +123,7 @@ const ProjectTable = (props: Props) => {
       align: 'center',
       render: (_, record) => (
         <div className="flex items-center justify-center">
-          <Setting task={record} />
+          <Setting task={record} clickItMenu={clickItMenu} />
           <div className="ml-2">{record.name}</div>
         </div>
       )
@@ -189,7 +210,7 @@ const ProjectTable = (props: Props) => {
     }
   }, [project])
 
-  return taskList.length ? <Table rowKey="id" dataSource={taskList} columns={columns}></Table> : null
+  return taskList.length ? <Table rowKey="id" dataSource={taskList} columns={columns} rowClassName={rowClassName}></Table> : null
 }
 
 export default ProjectTable

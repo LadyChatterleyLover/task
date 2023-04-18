@@ -5,10 +5,11 @@ import { CheckOutlined, DeleteOutlined } from '@ant-design/icons'
 
 interface Props {
   task: TaskItem
+  clickItMenu: (val: string, id: number) => void
 }
 
 const Setting = (props: Props) => {
-  const { task } = props
+  const { task, clickItMenu } = props
   const items: MenuProps['items'] = [
     {
       key: '0',
@@ -69,7 +70,7 @@ const Setting = (props: Props) => {
       type: 'divider'
     },
     {
-      key: '5',
+      key: 'del',
       label: (
         <div className="flex items-center">
           <DeleteOutlined />
@@ -81,7 +82,7 @@ const Setting = (props: Props) => {
       type: 'divider'
     },
     {
-      key: '6',
+      key: '#fff',
       label: (
         <div className="flex items-center">
           <div className="w-4 h-4 bg-white"></div>
@@ -90,7 +91,7 @@ const Setting = (props: Props) => {
       )
     },
     {
-      key: '7',
+      key: '#fffae6',
       label: (
         <div className="flex items-center">
           <div className="w-4 h-4 bg-[#fffae6]"></div>
@@ -99,7 +100,7 @@ const Setting = (props: Props) => {
       )
     },
     {
-      key: '8',
+      key: '#e5f5ff',
       label: (
         <div className="flex items-center">
           <div className="w-4 h-4 bg-[#e5f5ff]"></div>
@@ -108,7 +109,7 @@ const Setting = (props: Props) => {
       )
     },
     {
-      key: '9',
+      key: '#ecffe5',
       label: (
         <div className="flex items-center">
           <div className="w-4 h-4 bg-[#ecffe5]"></div>
@@ -117,7 +118,7 @@ const Setting = (props: Props) => {
       )
     },
     {
-      key: '10',
+      key: '#ffeaee',
       label: (
         <div className="flex items-center">
           <div className="w-4 h-4 bg-[#ffeaee]"></div>
@@ -126,7 +127,7 @@ const Setting = (props: Props) => {
       )
     },
     {
-      key: '11',
+      key: '#f6ecff',
       label: (
         <div className="flex items-center">
           <div className="w-4 h-4 bg-[#f6ecff]"></div>
@@ -135,7 +136,7 @@ const Setting = (props: Props) => {
       )
     },
     {
-      key: '12',
+      key: '#f3f3f3',
       label: (
         <div className="flex items-center">
           <div className="w-4 h-4 bg-[#f3f3f3]"></div>
@@ -144,8 +145,13 @@ const Setting = (props: Props) => {
       )
     }
   ]
+
+  const onClick: MenuProps['onClick'] = ({ key }) => {
+    clickItMenu(key, task.id)
+  }
+
   return (
-    <Dropdown menu={{ items }} placement="top" arrow trigger={['click']}>
+    <Dropdown menu={{ items, onClick }} placement="top" arrow trigger={['click']}>
       <div className="w-4 h-4 rounded-full cursor-pointer" style={{ border: '1px solid #eee' }}></div>
     </Dropdown>
   )

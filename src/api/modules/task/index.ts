@@ -1,8 +1,11 @@
 import { TaskItem } from '../../../types/task'
-import { post } from '../../request'
+import { patch, post } from '../../request'
 
 export default {
   getTaskDetail(params: { projectId: number; userId: number }) {
     return post<TaskItem[]>('/task/detail', params)
+  },
+  updateTask(id: number, params: Partial<TaskItem>) {
+    return patch(`/task/${id}`, params)
   }
 }
