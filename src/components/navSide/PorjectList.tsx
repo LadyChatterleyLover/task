@@ -5,7 +5,6 @@ import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Modal, Progress, message } from 'antd'
 import api from '../../api'
 import { ProjectItem } from '../../types/project'
-import { TaskItem } from '../../types/task'
 
 interface Props {
   setPath: (val: string) => void
@@ -99,14 +98,19 @@ const PorjectList = forwardRef((props: Props, ref) => {
         ? projectList.map((item) => {
             return (
               <div key={item.id}>
-                <div className="relative flex items-center py-2 px-1 mb-3 cursor-pointer" style={{ background: current === item.id ? '#fff' : 'inherit' }}>
+                <div
+                  className="relative flex items-center py-2 px-1 mb-3 cursor-pointer"
+                  style={{ background: current === item.id ? '#fff' : 'inherit' }}
+                >
                   <div className="flex items-center" onClick={(e) => clickProject(e, item)}>
                     <CaretRightOutlined style={{ color: '#999' }} />
                   </div>
                   <div className="ml-2" onClick={() => clickItem(item)}>
                     {item.name}
                   </div>
-                  <div className="absolute right-3">{item.tasks.length ? item.tasks.length : null}</div>
+                  <div className="absolute right-3">
+                    {item.tasks.length ? item.tasks.length : null}
+                  </div>
                 </div>
                 {item.flag ? (
                   <div className="text-xs ml-7">
@@ -116,7 +120,11 @@ const PorjectList = forwardRef((props: Props, ref) => {
                         {item.tasks.filter((i) => i.status === 4).length}/{item.tasks.length}
                       </div>
                       <div className="flex-1 relative top-[3px] left-1">
-                        <Progress percent={item.tasks.filter((i) => i.status === 4).length / item.tasks.length}></Progress>
+                        <Progress
+                          percent={
+                            item.tasks.filter((i) => i.status === 4).length / item.tasks.length
+                          }
+                        ></Progress>
                       </div>
                     </div>
                   </div>
@@ -126,13 +134,23 @@ const PorjectList = forwardRef((props: Props, ref) => {
           })
         : null}
       <div className="fixed bottom-5">
-        <Button type="primary" size="large" icon={<PlusOutlined />} style={{ width: 260 }} onClick={() => setVisible(true)}>
+        <Button
+          type="primary"
+          size="large"
+          icon={<PlusOutlined />}
+          style={{ width: 260 }}
+          onClick={() => setVisible(true)}
+        >
           新建项目
         </Button>
       </div>
       <Modal open={visible} title="新建项目" okText="添加" onOk={onOk} onCancel={onCancel}>
         <Form form={form}>
-          <Form.Item name="name" label="项目名称" rules={[{ required: true, message: '项目名称不能为空' }]}>
+          <Form.Item
+            name="name"
+            label="项目名称"
+            rules={[{ required: true, message: '项目名称不能为空' }]}
+          >
             <Input placeholder="请输入项目名称" allowClear autoComplete="off" />
           </Form.Item>
         </Form>

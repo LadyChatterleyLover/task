@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { ProjectItem } from '../../types/project'
@@ -9,6 +9,8 @@ import ProjectTable from '../../components/project/ProjectTable'
 const Project = () => {
   const [searchParams] = useSearchParams()
   const [project, setProject] = useState<ProjectItem>()
+  const [keyword, setKeyword] = useState('')
+  const tableRef = useRef<{ getTaskDetail: () => void }>()
 
   const getProject = (value: string) => {
     api.project.getProject(+value).then((res) => {
@@ -18,6 +20,10 @@ const Project = () => {
     })
   }
 
+  const searchConfirm = () => {
+    tableRef.current?.getTaskDetail()
+  }
+
   useEffect(() => {
     const value = searchParams.get('id') as string
     getProject(value)
@@ -25,9 +31,15 @@ const Project = () => {
 
   return (
     <div className="p-[30px]">
-      <ProjectHeader project={project as ProjectItem} getProject={getProject} />
+      <ProjectHeader
+        keyword={keyword}
+        setKeyword={setKeyword}
+        project={project as ProjectItem}
+        getProject={getProject}
+        searchConfirm={searchConfirm}
+      />
       <div className="mt-5">
-        <ProjectTable project={project as ProjectItem} />
+        <ProjectTable ref={tableRef} keyword={keyword} project={project as ProjectItem} />
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react'
 import { Table, Tag, TableColumnProps, message, Modal, Pagination, Avatar } from 'antd'
 import dayjs from 'dayjs'
 import { ProjectItem } from '../../types/project'
@@ -12,18 +12,18 @@ import { useRandomColor } from '../../hooks/useRandomColor'
 const { confirm } = Modal
 
 interface Props {
+  keyword: string
   project: ProjectItem
 }
 
-const ProjectTable = (props: Props) => {
-  const { project } = props
+const ProjectTable = forwardRef((props: Props, ref) => {
+  const { keyword, project } = props
   const user: LoginUser['user'] = JSON.parse(localStorage.getItem('task-user') as string)
   const [currentTime, setCurrentTime] = useState(dayjs())
   const [taskList, setTaskList] = useState<TaskItem[]>([])
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [size, setSize] = useState<number>(5)
   const [total, setTotal] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
 
   const getTaskDetail = () => {
     api.task
@@ -286,6 +286,10 @@ const ProjectTable = (props: Props) => {
     }
   }, [project, currentPage, size])
 
+  useImperativeHandle(ref, () => ({
+    getTaskDetail
+  }))
+
   return taskList.length ? (
     <div>
       <Table
@@ -309,6 +313,6 @@ const ProjectTable = (props: Props) => {
       </div>
     </div>
   ) : null
-}
+})
 
 export default ProjectTable

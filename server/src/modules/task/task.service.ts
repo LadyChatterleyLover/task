@@ -52,7 +52,7 @@ export class TaskService {
     }
   }
 
-  async findAll(current = 1, size = 5, keyword: string) {
+  async findAll(current = 1, size = 5, keyword = '') {
     const res = await this.taskRepository
       .createQueryBuilder('task')
       .leftJoinAndSelect('task.users', 'users')
@@ -89,7 +89,7 @@ export class TaskService {
       .leftJoinAndSelect('task.users', 'users')
       .where('project.id = :projectId', { projectId })
       .andWhere('users.id = :userId', { userId })
-      .orWhere('task.name LIKE :keyword', { keyword: `%${keyword}%` })
+      .andWhere('task.name LIKE :keyword', { keyword: `%${keyword}%` })
       .orWhere('task.id LIKE :keyword', { keyword: `%${keyword}%` })
       .orWhere('task.desc LIKE :keyword', { keyword: `%${keyword}%` })
       .skip((current - 1) * size)
