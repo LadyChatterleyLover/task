@@ -155,18 +155,4 @@ export class TaskService {
       }
     }
   }
-
-  async search(keyword: string) {
-    const data = await this.taskRepository
-      .createQueryBuilder('task')
-      .where('task.name LIKE :keyword', { keyword: `%${keyword}%` })
-      .orWhere('task.id LIKE :keyword', { keyword: `%${keyword}%` })
-      .orWhere('task.desc LIKE :keyword', { keyword: `%${keyword}%` })
-      .getMany()
-    return {
-      code: 200,
-      msg: '查询成功',
-      data,
-    }
-  }
 }

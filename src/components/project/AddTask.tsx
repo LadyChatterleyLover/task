@@ -83,7 +83,7 @@ const AddTask = (props: Props) => {
           <Input placeholder="任务描述" allowClear />
         </Form.Item>
         {userList.length ? (
-          <Form.Item name="users" rules={[{ required: true, message: '任务描述不能为空' }]}>
+          <Form.Item name="users">
             <Select placeholder="项目负责人" showSearch allowClear mode="multiple">
               {userList.map((item) => {
                 return (

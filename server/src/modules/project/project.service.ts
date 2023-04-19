@@ -3,11 +3,13 @@ import { ProjectDto } from './dto/project.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Project } from './entities/project.entity'
 import { Repository } from 'typeorm'
+import { User } from '../user/entities/user.entity'
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectRepository(Project) private projectRepository: Repository<Project>,
+    @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
   async create(projectDto: ProjectDto) {
     const { name } = projectDto
@@ -55,6 +57,7 @@ export class ProjectService {
     const data = await this.projectRepository
       .createQueryBuilder('project')
       .leftJoinAndSelect('project.tasks', 'tasks')
+      .leftJoinAndSelect('project.users', 'userList')
       .leftJoinAndSelect('tasks.users', 'users')
       .where('project.id = :id', { id })
       .getMany()
@@ -72,13 +75,20 @@ export class ProjectService {
     }
   }
 
-  async update(id: number, updateProjectDto: ProjectDto) {
+  async update(id: number, updateProjectDto) {
     const data = await this.projectRepository.findOne({
       where: {
         id,
       },
     })
     const newData = Object.assign(data, { ...updateProjectDto })
+    if (updateProjectDto.users && updateProjectDto.users.length) {
+      const users = await this.userRepository
+        .createQueryBuilder('user')
+        .whereInIds(updateProjectDto.users)
+        .getMany()
+      newData.users = users
+    }
     const res = await this.projectRepository.save(newData)
     if (res) {
       return {

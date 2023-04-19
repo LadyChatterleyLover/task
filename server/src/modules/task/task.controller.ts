@@ -53,11 +53,6 @@ export class TaskController {
     )
   }
 
-  @Post('search')
-  async search(@Body() params: { keyword: string }) {
-    return this.taskService.search(params.keyword)
-  }
-
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateTaskDto) {
     return this.taskService.update(+id, updateTaskDto)

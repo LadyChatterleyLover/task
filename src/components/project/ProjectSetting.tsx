@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MoreOutlined } from '@ant-design/icons'
-import { Avatar, Dropdown, Modal, Form, MenuProps, Input, message } from 'antd'
+import { Avatar, Dropdown, Modal, Form, MenuProps, Input, message, Select } from 'antd'
 import { ProjectItem } from '../../types/project'
 import api from '../../api'
+import { LoginUser } from '../../api/modules/user/types'
 
 interface Props {
   project: ProjectItem
@@ -65,12 +66,21 @@ const ProjectSetting = (props: Props) => {
     }
   ]
   const [settingForm] = Form.useForm()
+  const [userForm] = Form.useForm()
 
+  const user: LoginUser['user'] = JSON.parse(localStorage.getItem('task-user') as string)
+
+  const [userList, setUserList] = useState<LoginUser['user'][]>([])
   const [settingVisible, setSettingVisible] = useState(false)
+  const [userVisible, setUserVisible] = useState(false)
 
   const clickMenu: MenuProps['onClick'] = ({ key }) => {
     if (key === '1') {
       setSettingVisible(true)
+    }
+    if (key === '3') {
+      setUserVisible(true)
+      getUserList()
     }
   }
 
@@ -99,6 +109,31 @@ const ProjectSetting = (props: Props) => {
       })
   }
 
+  const getUserList = () => {
+    api.user.userList().then((res) => {
+      if (res.code === 200) {
+        setUserList(res.data)
+      }
+    })
+  }
+
+  const userConfirm = () => {
+    const users = userForm.getFieldsValue().users
+    api.project
+      .updateProject(project.id, {
+        users
+      })
+      .then((res) => {
+        if (res.code === 200) {
+          message.success(res.msg)
+          setUserVisible(false)
+          getProject(String(project.id))
+        } else {
+          message.error(res.msg)
+        }
+      })
+  }
+
   return (
     <>
       <Dropdown menu={{ items, onClick: clickMenu }} trigger={['click']} placement="bottom" arrow>
@@ -120,6 +155,27 @@ const ProjectSetting = (props: Props) => {
             rules={[{ required: true, message: '项目名称不能为空' }]}
           >
             <Input placeholder="请输入项目名称" allowClear />
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="成员管理"
+        open={userVisible}
+        destroyOnClose
+        onOk={userConfirm}
+        onCancel={() => setUserVisible(false)}
+      >
+        <Form form={userForm} initialValues={{ users: [user.id] }}>
+          <Form.Item name="users">
+            <Select placeholder="项目负责人" showSearch allowClear mode="multiple">
+              {userList.map((item) => {
+                return (
+                  <Select.Option key={item.id} value={item.id} disabled={item.id === user.id}>
+                    {item.username}
+                  </Select.Option>
+                )
+              })}
+            </Select>
           </Form.Item>
         </Form>
       </Modal>

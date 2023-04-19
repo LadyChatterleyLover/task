@@ -1,3 +1,4 @@
+import { LoginUser } from '../api/modules/user/types'
 import { TaskItem } from './task'
 
 export interface ProjectItem {
@@ -7,5 +8,6 @@ export interface ProjectItem {
   updateAt: string
   tasks: TaskItem[]
   myTasks?: TaskItem[]
+  users: LoginUser['user'][]
   flag?: boolean
 }
