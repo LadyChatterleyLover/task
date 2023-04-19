@@ -9,5 +9,6 @@ export interface LoginUser {
     updateAt: string
     username: string
     avatar: string
+    bgColor?: string
   }
 }

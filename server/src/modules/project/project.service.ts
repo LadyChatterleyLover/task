@@ -41,6 +41,7 @@ export class ProjectService {
     const data = await this.projectRepository
       .createQueryBuilder('project')
       .leftJoinAndSelect('project.tasks', 'tasks')
+      .leftJoinAndSelect('project.users', 'userList')
       .leftJoinAndSelect('tasks.users', 'users')
       .getMany()
     return {

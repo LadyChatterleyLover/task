@@ -1,3 +1,4 @@
+import { User } from 'src/modules/user/entities/user.entity'
 import { Task } from './../../task/entities/task.entity'
 import {
   Entity,
@@ -6,7 +7,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm'
 
 @Entity()
@@ -19,6 +21,10 @@ export class Project {
 
   @OneToMany(() => Task, (task) => task.project)
   tasks: Task[]
+
+  @ManyToMany(() => User, (user) => user.project)
+  @JoinTable({ name: 'projects_users' })
+  users: User[]
 
   @CreateDateColumn()
   createAt: Date

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Table, Tag, TableColumnProps, message, Modal, Pagination } from 'antd'
+import { Table, Tag, TableColumnProps, message, Modal, Pagination, Avatar } from 'antd'
 import dayjs from 'dayjs'
 import { ProjectItem } from '../../types/project'
 import { TaskItem } from '../../types/task'
@@ -7,6 +7,7 @@ import Setting from './Setting'
 import api from '../../api'
 import { LoginUser } from '../../api/modules/user/types'
 import { ExclamationCircleFilled } from '@ant-design/icons'
+import { useRandomColor } from '../../hooks/useRandomColor'
 
 const { confirm } = Modal
 
@@ -35,6 +36,11 @@ const ProjectTable = (props: Props) => {
       })
       .then((res) => {
         if (res.code === 200) {
+          res.data.map((item) => {
+            item.users.map((user) => {
+              user.bgColor = useRandomColor()
+            })
+          })
           setTaskList(res.data)
           setTotal(res.total as number)
         }
@@ -70,14 +76,16 @@ const ProjectTable = (props: Props) => {
       return (
         <Tag color="orange">
           {days !== 0 ? days + 'd,' : null}
-          {hours < 10 ? '0' + hours : hours}:{minutes < 10 ? '0' + minutes : minutes}:{seconds < 10 ? '0' + seconds : seconds}
+          {hours < 10 ? '0' + hours : hours}:{minutes < 10 ? '0' + minutes : minutes}:
+          {seconds < 10 ? '0' + seconds : seconds}
         </Tag>
       )
     } else {
       if (days === -1) {
         return (
           <Tag color="red">
-            {Math.abs(hours) < 10 ? '-0' + Math.abs(hours) : hours}:{Math.abs(minutes) < 10 ? '0' + Math.abs(minutes) : Math.abs(minutes)}:
+            {Math.abs(hours) < 10 ? '-0' + Math.abs(hours) : hours}:
+            {Math.abs(minutes) < 10 ? '0' + Math.abs(minutes) : Math.abs(minutes)}:
             {Math.abs(seconds) < 10 ? '0' + Math.abs(seconds) : Math.abs(seconds)}
           </Tag>
         )
@@ -227,17 +235,21 @@ const ProjectTable = (props: Props) => {
       dataIndex: 'users',
       key: 'users',
       align: 'center',
-      render: (_, r, index) => (
-        <div>
-          {project.tasks[index] &&
-            project.tasks[index].users &&
-            project.tasks[index].users.map((item) => (
-              <span key={item.id} className="mr-1">
-                {item.username}
-              </span>
-            ))}
-        </div>
-      )
+      render: (_, rocord) => {
+        return (
+          <Avatar.Group>
+            {rocord &&
+              rocord.users &&
+              rocord.users.map((item) => {
+                return (
+                  <Avatar style={{ background: item.bgColor }} key={item.id}>
+                    {item.username.slice(0, 2)}
+                  </Avatar>
+                )
+              })}
+          </Avatar.Group>
+        )
+      }
     },
     {
       title: '到期时间',
@@ -249,6 +261,7 @@ const ProjectTable = (props: Props) => {
       }
     }
   ]
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(dayjs())
@@ -275,7 +288,13 @@ const ProjectTable = (props: Props) => {
 
   return taskList.length ? (
     <div>
-      <Table rowKey="id" dataSource={taskList} columns={columns} rowClassName={rowClassName} pagination={false}></Table>
+      <Table
+        rowKey="id"
+        dataSource={taskList}
+        columns={columns}
+        rowClassName={rowClassName}
+        pagination={false}
+      ></Table>
       <div className="flex justify-end mt-5">
         <Pagination
           total={total}

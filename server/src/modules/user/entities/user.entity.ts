@@ -10,6 +10,7 @@ import {
 } from 'typeorm'
 import { Exclude } from 'class-transformer'
 import { File } from 'src/modules/file/entities/file.entity'
+import { Project } from 'src/modules/project/entities/project.entity'
 
 @Entity()
 export class User {
@@ -37,6 +38,9 @@ export class User {
 
   @ManyToMany(() => Task, (task) => task.users)
   tasks: Task[]
+
+  @ManyToMany(() => Project, (project) => project.users)
+  project: Project[]
 
   @OneToMany(() => File, (file) => file.user_id)
   file: File[]
