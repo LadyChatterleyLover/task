@@ -9,6 +9,7 @@ export interface TaskItem {
   name: string
   startTime: string
   updateAt: string
+  level: string
   completed: boolean
   bgColor: string
   users: LoginUser['user'][]

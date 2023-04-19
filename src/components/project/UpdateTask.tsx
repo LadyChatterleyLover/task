@@ -1,74 +1,77 @@
-import React from 'react'
-import { Form, Input, Modal, Select, DatePicker, message } from 'antd'
-import dayjs from 'dayjs'
-import api from '../../api'
+import React, { useEffect } from 'react'
+import { Modal, Form, Input, Select, DatePicker, message } from 'antd'
 import { ProjectItem } from '../../types/project'
 import { LoginUser } from '../../api/modules/user/types'
+import { TaskItem } from '../../types/task'
+import dayjs from 'dayjs'
+import api from '../../api'
 
 const { RangePicker } = DatePicker
 
 interface Props {
-  visible: boolean
   project: ProjectItem
-  getProject: (val: string) => void
+  task: TaskItem
+  visible: boolean
   setVisible: (val: boolean) => void
+  getTaskDetail: () => void
 }
 
-const AddTask = (props: Props) => {
-  const { visible, project, getProject, setVisible } = props
+const UpdateTask = (props: Props) => {
+  const { project, task, visible, setVisible, getTaskDetail } = props
+  const [form] = Form.useForm()
+  const user: LoginUser['user'] = JSON.parse(localStorage.getItem('task-user') as string)
   const rangeConfig = {
     rules: [{ type: 'array' as const, required: true, message: '请选择时间' }]
   }
-  const user: LoginUser['user'] = JSON.parse(localStorage.getItem('task-user') as string)
-  const [form] = Form.useForm()
 
-  const addTask = () => {
+  const confirm = () => {
     form
       .validateFields()
       .then(() => {
         const values = form.getFieldsValue()
-        const startTime = dayjs(values.time[0]).format('YYYY-MM-MM HH:mm:ss')
-        const endTime = dayjs(values.time[1]).format('YYYY-MM-MM HH:mm:ss')
         api.task
-          .addTask({
+          .updateTask(task.id, {
             ...values,
-            startTime,
-            endTime,
-            project: project.id
+            startTime: dayjs(values.time[0]).format('YYYY-MM-DD HH:mm:ss'),
+            endTime: dayjs(values.time[1]).format('YYYY-MM-DD HH:mm:ss')
           })
           .then((res) => {
             if (res.code === 200) {
               message.success(res.msg)
-              getProject(String(project.id))
+              getTaskDetail()
               setVisible(false)
             } else {
               message.error(res.msg)
             }
-          })
-          .catch(() => {
-            setVisible(false)
           })
       })
       .catch(() => {
         message.error('表单填写有误,请检查')
       })
   }
-  return (
-    <Modal
-      open={visible}
-      title="添加任务"
-      destroyOnClose
-      onOk={addTask}
-      onCancel={() => setVisible(false)}
-    >
-      <Form form={form} initialValues={{ users: [user.id] }}>
+
+  useEffect(() => {
+    if (task) {
+      form.setFieldsValue({
+        name: task.name,
+        desc: task.desc,
+        level: task.level,
+        time: [dayjs(task.startTime), dayjs(task.endTime)],
+        users: task.users.map((item) => item.id)
+      })
+    }
+  }, [task])
+
+  return task ? (
+    <Modal title={task.name} open={visible} onOk={confirm} onCancel={() => setVisible(false)}>
+      <Form form={form}>
         <Form.Item name="name" rules={[{ required: true, message: '任务名称不能为空' }]}>
           <Input placeholder="任务名称" allowClear />
         </Form.Item>
         <Form.Item name="desc" rules={[{ required: true, message: '任务描述不能为空' }]}>
           <Input placeholder="任务描述" allowClear />
         </Form.Item>
-        {project && project.users && project.users.length ? (
+        {project && project.users.length ? (
           <Form.Item name="users">
             <Select placeholder="项目负责人" showSearch allowClear mode="multiple">
               {project.users.map((item) => {
@@ -98,7 +101,7 @@ const AddTask = (props: Props) => {
         </Form.Item>
       </Form>
     </Modal>
-  )
+  ) : null
 }
 
-export default AddTask
+export default UpdateTask

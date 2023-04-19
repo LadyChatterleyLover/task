@@ -170,6 +170,7 @@ const Setting = (props: Props) => {
       <div
         className="w-4 h-4 rounded-full cursor-pointer"
         style={{ border: '1px solid #eee' }}
+        onClick={(e) => e.stopPropagation()}
       ></div>
     </Dropdown>
   )

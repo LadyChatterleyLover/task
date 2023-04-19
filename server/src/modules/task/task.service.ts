@@ -5,12 +5,14 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Task } from './entities/task.entity'
 import { Repository } from 'typeorm'
 import { Project } from '../project/entities/project.entity'
+import { User } from '../user/entities/user.entity'
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(Task) private taskRepository: Repository<Task>,
     @InjectRepository(Project) private projectRepository: Repository<Project>,
+    @InjectRepository(User) private userRepository: Repository<User>,
     private readonly userService: UserService,
   ) {}
 
@@ -88,7 +90,6 @@ export class TaskService {
       .leftJoinAndSelect('task.project', 'project')
       .leftJoinAndSelect('task.users', 'users')
       .where('task.project = :projectId', { projectId })
-      .andWhere('users.id = :userId', { userId })
       .andWhere('task.name LIKE :keyword')
       .setParameter('keyword', `%${keyword}%`)
       .skip((current - 1) * size)
@@ -122,6 +123,13 @@ export class TaskService {
       },
     })
     const newData = Object.assign(data, { ...updateTaskDto })
+    if (updateTaskDto.users && updateTaskDto.users.length) {
+      const users = await this.userRepository
+        .createQueryBuilder('user')
+        .whereInIds(updateTaskDto.users)
+        .getMany()
+      newData.users = users
+    }
     const res = await this.taskRepository.save(newData)
     if (res) {
       return {

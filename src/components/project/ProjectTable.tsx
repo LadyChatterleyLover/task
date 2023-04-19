@@ -8,6 +8,7 @@ import api from '../../api'
 import { LoginUser } from '../../api/modules/user/types'
 import { ExclamationCircleFilled } from '@ant-design/icons'
 import { useRandomColor } from '../../hooks/useRandomColor'
+import UpdateTask from './UpdateTask'
 
 const { confirm } = Modal
 
@@ -21,9 +22,11 @@ const ProjectTable = forwardRef((props: Props, ref) => {
   const user: LoginUser['user'] = JSON.parse(localStorage.getItem('task-user') as string)
   const [currentTime, setCurrentTime] = useState(dayjs())
   const [taskList, setTaskList] = useState<TaskItem[]>([])
+  const [currentTask, setCurrentTask] = useState<TaskItem>()
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [size, setSize] = useState<number>(10)
   const [total, setTotal] = useState<number>(0)
+  const [visible, setVisible] = useState(false)
 
   const getTaskDetail = () => {
     api.task
@@ -167,7 +170,7 @@ const ProjectTable = forwardRef((props: Props, ref) => {
   }
 
   const rowClassName = (rocord: TaskItem) => {
-    return `bg-[${rocord.bgColor}]`
+    return `bg-[${rocord.bgColor}] cursor-pointer`
   }
 
   const columns: TableColumnProps<TaskItem>[] = [
@@ -262,6 +265,16 @@ const ProjectTable = forwardRef((props: Props, ref) => {
     }
   ]
 
+  const onRow = (record: TaskItem) => {
+    return {
+      onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
+        setCurrentTask(record)
+        setVisible(true)
+      }
+    }
+  }
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(dayjs())
@@ -298,6 +311,7 @@ const ProjectTable = forwardRef((props: Props, ref) => {
         columns={columns}
         rowClassName={rowClassName}
         pagination={false}
+        onRow={onRow}
       ></Table>
       <div className="flex justify-end mt-5">
         <Pagination
@@ -311,6 +325,13 @@ const ProjectTable = forwardRef((props: Props, ref) => {
           showTotal={(total) => `共 ${total} 条`}
         />
       </div>
+      <UpdateTask
+        project={project}
+        task={currentTask as TaskItem}
+        visible={visible}
+        setVisible={setVisible}
+        getTaskDetail={getTaskDetail}
+      />
     </div>
   ) : (
     <div className="flex items-center justify-center h-full w-full">
