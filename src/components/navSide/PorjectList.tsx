@@ -34,7 +34,7 @@ const PorjectList = forwardRef((props: Props, ref) => {
   const clickItem = (item: ProjectItem) => {
     setPath('')
     setCurrent(item.id)
-    navigate('/project?id=' + item.id)
+    navigate(`/project?id=${item.id}&name=${item.name}`)
   }
 
   const clickProject = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, item: ProjectItem) => {
@@ -84,8 +84,15 @@ const PorjectList = forwardRef((props: Props, ref) => {
   }, [])
 
   useEffect(() => {
-    const value = searchParams.get('id') as string
-    setCurrent(+value)
+    const id = searchParams.get('id') as string
+    const name = searchParams.get('name') as string
+    projectList.map((item) => {
+      if (item.id === +id) {
+        item.name = name
+      }
+    })
+    setProjectList([...projectList])
+    setCurrent(+id)
   }, [searchParams])
 
   useImperativeHandle(ref, () => ({

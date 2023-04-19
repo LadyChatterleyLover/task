@@ -3,7 +3,7 @@ import { Table, Tag, TableColumnProps, message, Modal, Pagination, Avatar } from
 import dayjs from 'dayjs'
 import { ProjectItem } from '../../types/project'
 import { TaskItem } from '../../types/task'
-import Setting from './Setting'
+import TaskSetting from './TaskSetting'
 import api from '../../api'
 import { LoginUser } from '../../api/modules/user/types'
 import { ExclamationCircleFilled } from '@ant-design/icons'
@@ -22,7 +22,7 @@ const ProjectTable = forwardRef((props: Props, ref) => {
   const [currentTime, setCurrentTime] = useState(dayjs())
   const [taskList, setTaskList] = useState<TaskItem[]>([])
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const [size, setSize] = useState<number>(5)
+  const [size, setSize] = useState<number>(10)
   const [total, setTotal] = useState<number>(0)
 
   const getTaskDetail = () => {
@@ -185,7 +185,7 @@ const ProjectTable = forwardRef((props: Props, ref) => {
       render: (_, record) => (
         <div className="flex items-center">
           <div className="w-[45%] flex justify-end">
-            <Setting task={record} clickItMenu={clickItMenu} />
+            <TaskSetting task={record} clickItMenu={clickItMenu} />
           </div>
           <div className="ml-2 flex-1 flex justify-start">{record.name}</div>
         </div>
@@ -303,7 +303,7 @@ const ProjectTable = forwardRef((props: Props, ref) => {
         <Pagination
           total={total}
           defaultPageSize={size}
-          pageSizeOptions={[5, 10, 20, 50]}
+          pageSizeOptions={[10, 20, 50, 100]}
           onChange={changeCurrent}
           onShowSizeChange={changeSize}
           showSizeChanger

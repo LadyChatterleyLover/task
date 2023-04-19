@@ -15,7 +15,10 @@ const Setting = (props: Props) => {
       key: '0',
       label: (
         <div className="flex items-center">
-          <div className="w-4 h-4 rounded-full flex items-center justify-center" style={{ border: '1px solid', borderColor: task.status === 0 ? '#84c56a' : '#eee' }}>
+          <div
+            className="w-4 h-4 rounded-full flex items-center justify-center"
+            style={{ border: '1px solid', borderColor: task.status === 0 ? '#84c56a' : '#eee' }}
+          >
             {task.status === 0 ? <CheckOutlined size={12} style={{ color: '#84c56a' }} /> : null}
           </div>
           <div className="m-[6px]">待处理</div>
@@ -26,7 +29,10 @@ const Setting = (props: Props) => {
       key: '1',
       label: (
         <div className="flex items-center">
-          <div className="w-4 h-4 rounded-full flex items-center justify-center" style={{ border: '1px solid', borderColor: task.status === 1 ? '#84c56a' : '#eee' }}>
+          <div
+            className="w-4 h-4 rounded-full flex items-center justify-center"
+            style={{ border: '1px solid', borderColor: task.status === 1 ? '#84c56a' : '#eee' }}
+          >
             {task.status === 1 ? <CheckOutlined style={{ color: '#84c56a' }} /> : null}
           </div>
           <div className="m-[6px]">进行中</div>
@@ -37,7 +43,10 @@ const Setting = (props: Props) => {
       key: '2',
       label: (
         <div className="flex items-center">
-          <div className="w-4 h-4 rounded-full flex items-center justify-center" style={{ border: '1px solid', borderColor: task.status === 2 ? '#84c56a' : '#eee' }}>
+          <div
+            className="w-4 h-4 rounded-full flex items-center justify-center"
+            style={{ border: '1px solid', borderColor: task.status === 2 ? '#84c56a' : '#eee' }}
+          >
             {task.status === 2 ? <CheckOutlined style={{ color: '#84c56a' }} /> : null}
           </div>
           <div className="m-[6px]">待测试</div>
@@ -48,7 +57,10 @@ const Setting = (props: Props) => {
       key: '3',
       label: (
         <div className="flex items-center">
-          <div className="w-4 h-4 rounded-full flex items-center justify-center" style={{ border: '1px solid', borderColor: task.status === 3 ? '#84c56a' : '#eee' }}>
+          <div
+            className="w-4 h-4 rounded-full flex items-center justify-center"
+            style={{ border: '1px solid', borderColor: task.status === 3 ? '#84c56a' : '#eee' }}
+          >
             {task.status === 3 ? <CheckOutlined style={{ color: '#84c56a' }} /> : null}
           </div>
           <div className="m-[6px]">已完成</div>
@@ -59,7 +71,10 @@ const Setting = (props: Props) => {
       key: '4',
       label: (
         <div className="flex items-center">
-          <div className="w-4 h-4 rounded-full flex items-center justify-center" style={{ border: '1px solid', borderColor: task.status === 4 ? '#84c56a' : '#eee' }}>
+          <div
+            className="w-4 h-4 rounded-full flex items-center justify-center"
+            style={{ border: '1px solid', borderColor: task.status === 4 ? '#84c56a' : '#eee' }}
+          >
             {task.status === 4 ? <CheckOutlined style={{ color: '#84c56a' }} /> : null}
           </div>
           <div className="m-[6px]">已取消</div>
@@ -152,7 +167,10 @@ const Setting = (props: Props) => {
 
   return (
     <Dropdown menu={{ items, onClick }} placement="top" arrow trigger={['click']}>
-      <div className="w-4 h-4 rounded-full cursor-pointer" style={{ border: '1px solid #eee' }}></div>
+      <div
+        className="w-4 h-4 rounded-full cursor-pointer"
+        style={{ border: '1px solid #eee' }}
+      ></div>
     </Dropdown>
   )
 }

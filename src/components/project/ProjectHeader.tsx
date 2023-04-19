@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { Avatar, Input, Popover, Tooltip } from 'antd'
 import { ProjectItem } from '../../types/project'
 import { LoginUser } from '../../api/modules/user/types'
-import { MoreOutlined, PlusOutlined, SearchOutlined, WechatOutlined } from '@ant-design/icons'
+import { PlusOutlined, SearchOutlined, WechatOutlined } from '@ant-design/icons'
 import AddTask from './AddTask'
+import ProjectSetting from './ProjectSetting'
 
 interface Props {
   keyword: string
@@ -61,9 +62,7 @@ const ProjectHeader = (props: Props) => {
               </Avatar>
             </div>
             <div className="mr-3 cursor-pointer">
-              <Avatar style={{ background: '#f2f3f5', color: '#606266' }}>
-                <MoreOutlined style={{ transform: 'rotate(90deg)' }} />
-              </Avatar>
+              <ProjectSetting project={project} getProject={getProject} />
             </div>
           </div>
         </div>
