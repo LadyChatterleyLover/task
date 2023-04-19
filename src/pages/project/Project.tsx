@@ -30,7 +30,7 @@ const Project = () => {
   }, [searchParams])
 
   return (
-    <div className="p-[30px]">
+    <div className="p-[30px] h-full w-full">
       <ProjectHeader
         keyword={keyword}
         setKeyword={setKeyword}
@@ -38,7 +38,7 @@ const Project = () => {
         getProject={getProject}
         searchConfirm={searchConfirm}
       />
-      <div className="mt-5">
+      <div className="mt-5  h-full w-full">
         <ProjectTable ref={tableRef} keyword={keyword} project={project as ProjectItem} />
       </div>
     </div>

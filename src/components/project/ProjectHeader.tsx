@@ -28,7 +28,7 @@ const ProjectHeader = (props: Props) => {
       value={keyword}
       onChange={(e) => setKeyword(e.target.value)}
       onPressEnter={onPressEnter}
-      placeholder="ID、名称、描述..."
+      placeholder="请输入项目名称"
       allowClear
     />
   )

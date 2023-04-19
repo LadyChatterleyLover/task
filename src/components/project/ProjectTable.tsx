@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react'
-import { Table, Tag, TableColumnProps, message, Modal, Pagination, Avatar } from 'antd'
+import { Table, Tag, TableColumnProps, message, Modal, Pagination, Avatar, Empty } from 'antd'
 import dayjs from 'dayjs'
 import { ProjectItem } from '../../types/project'
 import { TaskItem } from '../../types/task'
@@ -291,7 +291,7 @@ const ProjectTable = forwardRef((props: Props, ref) => {
   }))
 
   return taskList.length ? (
-    <div>
+    <div className="h-full w-full">
       <Table
         rowKey="id"
         dataSource={taskList}
@@ -312,7 +312,11 @@ const ProjectTable = forwardRef((props: Props, ref) => {
         />
       </div>
     </div>
-  ) : null
+  ) : (
+    <div className="flex items-center justify-center h-full w-full">
+      <Empty />
+    </div>
+  )
 })
 
 export default ProjectTable
