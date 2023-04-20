@@ -11,7 +11,7 @@ import { UploadFile } from './dto/file.dto'
 export class FileService {
   public client
   constructor(
-    @InjectRepository(File) private readonly fileModel: Repository<File>,
+    @InjectRepository(File) private readonly fileRepository: Repository<File>,
   ) {
     this.client = new OSS(client)
   }
@@ -24,7 +24,7 @@ export class FileService {
     const size = file.size
     const ext = file.mimetype.split('/')[1]
     const url = await this.uploadFile(name, stream)
-    const res = await this.fileModel.create({
+    const res = await this.fileRepository.save({
       name,
       size,
       ext,
@@ -55,5 +55,19 @@ export class FileService {
       console.log(error)
     }
     return res.url
+  }
+
+  async findAll(user_id: string, name: string) {
+    const data = await this.fileRepository.find({
+      where: {
+        user_id,
+        name,
+      },
+    })
+    return {
+      code: 200,
+      msg: '查询成功',
+      data,
+    }
   }
 }

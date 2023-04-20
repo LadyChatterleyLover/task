@@ -22,6 +22,12 @@ export class File {
   @Column()
   url: string
 
+  @Column({ default: false })
+  isDir: boolean
+
+  @Column({ default: null })
+  dirId: number
+
   @ManyToOne(() => User, (user) => user.file)
   @Column()
   user_id: string

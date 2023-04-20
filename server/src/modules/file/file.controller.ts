@@ -5,6 +5,7 @@ import {
   UploadedFile,
   UseGuards,
   Req,
+  Body,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { FileService } from './file.service'
@@ -35,8 +36,14 @@ export class FileController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async upload(@UploadedFile() file: UploadFile, @Req() req) {
+    console.log('file', file)
     const name = file.originalname
     const stream = bufferToStream(file.buffer)
-    return this.fileService.upload(name, stream, file, req.user.user_id)
+    return this.fileService.upload(name, stream, file, req.user.id)
+  }
+
+  @Post()
+  async findAll(@Body() params: { user_id: string; name: string }) {
+    return this.fileService.findAll(params.user_id, params.name)
   }
 }

@@ -40,7 +40,7 @@ export class User {
   tasks: Task[]
 
   @ManyToMany(() => Project, (project) => project.users)
-  project: Project[]
+  project: Task[]
 
   @OneToMany(() => File, (file) => file.user_id)
   file: File[]

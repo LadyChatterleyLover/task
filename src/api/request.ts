@@ -1,5 +1,4 @@
 import axios, { ResponseType } from 'axios'
-import QS from 'qs'
 import { message } from 'antd'
 
 const service = axios.create({
@@ -78,7 +77,12 @@ interface IResponseData<T> {
 }
 
 //get请求
-export function get<T>(url: string, params?: any, responseType?: ResponseType, headers?: any): Promise<IResponseData<T>> {
+export function get<T>(
+  url: string,
+  params?: any,
+  responseType?: ResponseType,
+  headers?: any
+): Promise<IResponseData<T>> {
   return service.get(url, {
     params: params ?? {},
     headers: {
@@ -91,14 +95,18 @@ export function get<T>(url: string, params?: any, responseType?: ResponseType, h
 export function post<T>(url: string, params?: any, _object = {}): Promise<IResponseData<T>> {
   return service.post(url, params, { ..._object })
 }
-export function postFormData<T>(url: string, params?: any, headers?: any): Promise<IResponseData<T>> {
-  return service.post(url, {
-    headers: {
-      ...(headers || {}),
-      'Content-Type': 'application/x-www-form-urlencoded'
+export function postFormData<T>(url: string, params?: any): Promise<IResponseData<T>> {
+  return service.post(
+    url,
+    {
+      ...params
     },
-    data: QS.stringify(params) || {}
-  })
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+  )
 }
 export function put<T>(url: string, params?: any, _object = {}): Promise<IResponseData<T>> {
   return service.put(url, params)
