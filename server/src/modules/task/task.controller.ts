@@ -24,7 +24,12 @@ export class TaskController {
 
   @Post('list')
   async findAll(
-    @Body() params: { current: number; size: number; keyword: string },
+    @Body()
+    params: {
+      current: number
+      size: number
+      keyword: string
+    },
   ) {
     return await this.taskService.findAll(
       params.current,

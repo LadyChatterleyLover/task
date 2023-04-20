@@ -1,5 +1,6 @@
 import { LoginUser } from './types'
 import { get, post } from '../../request'
+import { TaskItem } from '../../../types/task'
 
 export default {
   login(params: { username: string; password: string }) {
@@ -10,5 +11,8 @@ export default {
   },
   userList() {
     return get<LoginUser['user'][]>('/user')
+  },
+  findTask(params: { id: number }) {
+    return post<TaskItem[]>('/user/task', params)
   }
 }

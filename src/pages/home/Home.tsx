@@ -16,21 +16,25 @@ const Home = () => {
   const [currentTime, setCurrentTime] = useState(dayjs())
 
   const getTaskList = () => {
-    api.task.getTaskList().then((res) => {
-      setTodayTaskList(
-        res.data.filter((item) => {
-          const diff = dayjs(item.endTime).diff(dayjs().startOf('day'))
-          return diff >= 0 && diff < 1000 * 60 * 60 * 24
-        })
-      )
-      setOverTaskList(
-        res.data.filter((item) => {
-          const diff = dayjs(item.endTime).diff(dayjs().startOf('day'))
-          return diff < 0
-        })
-      )
-      setUncompleteList(res.data.filter((item) => item.status !== 4))
-    })
+    api.user
+      .findTask({
+        id: user.id
+      })
+      .then((res) => {
+        setTodayTaskList(
+          res.data.filter((item) => {
+            const diff = dayjs(item.endTime).diff(dayjs().startOf('day'))
+            return diff >= 0 && diff < 1000 * 60 * 60 * 24
+          })
+        )
+        setOverTaskList(
+          res.data.filter((item) => {
+            const diff = dayjs(item.endTime).diff(dayjs().startOf('day'))
+            return diff < 0
+          })
+        )
+        setUncompleteList(res.data.filter((item) => item.status !== 4))
+      })
   }
 
   const renderStatus = (status: number) => {

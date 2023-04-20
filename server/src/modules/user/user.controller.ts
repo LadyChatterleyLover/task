@@ -25,4 +25,9 @@ export class UserController {
   async findByIds(@Body() ids) {
     return await this.userService.findByIds(ids)
   }
+
+  @Post('task')
+  async findTask(@Body() params: { id: number }) {
+    return this.userService.findTask(params.id)
+  }
 }

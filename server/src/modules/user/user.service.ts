@@ -99,4 +99,18 @@ export class UserService {
       .getMany()
     return res
   }
+
+  async findTask(id: number) {
+    const res: any = await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.tasks', 'tasks')
+      .where('user.id = :id', { id })
+      .getOne()
+    return {
+      code: 200,
+      msg: '获取成功',
+      data: res.tasks,
+      total: res.tasks.length,
+    }
+  }
 }
