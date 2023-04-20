@@ -3,8 +3,10 @@ import FileHeader from '../../components/file/FileHeader'
 import FileTable from '../../components/file/FileTable'
 import api from '../../api'
 import { FileItem } from '../../types/file'
+import { LoginUser } from '../../api/modules/user/types'
 
 const File = () => {
+  const user: LoginUser['user'] = JSON.parse(localStorage.getItem('task-user') as string)
   const [fileList, setFileList] = useState<FileItem[]>([])
 
   const getFileList = (params?: { user_id?: string; name?: string; dirId?: number | null }) => {
@@ -15,6 +17,16 @@ const File = () => {
     })
   }
 
+  const changeMyFile = (val: boolean) => {
+    if (val) {
+      getFileList({
+        user_id: String(user.id)
+      })
+    } else {
+      getFileList()
+    }
+  }
+
   useEffect(() => {
     getFileList()
   }, [])
@@ -22,7 +34,7 @@ const File = () => {
   return (
     <div className="p-[30px] h-full w-full">
       <FileHeader getFileList={getFileList} />
-      <FileTable fileList={fileList} />
+      <FileTable fileList={fileList} changeMyFile={changeMyFile} />
     </div>
   )
 }

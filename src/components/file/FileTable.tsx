@@ -3,13 +3,15 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Checkbox, Empty, Image } from 'antd'
 import { MenuOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { FileItem } from '../../types/file'
+import { CheckboxChangeEvent } from 'antd/es/checkbox'
 
 interface Props {
   fileList: FileItem[]
+  changeMyFile: (val: boolean) => void
 }
 
 const FileTable = (props: Props) => {
-  const { fileList } = props
+  const { fileList, changeMyFile } = props
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [myChecked, setMyChecked] = useState(false)
@@ -56,6 +58,12 @@ const FileTable = (props: Props) => {
     }
   }
 
+  const changeCheckbox = (e: CheckboxChangeEvent) => {
+    const checked = e.target.checked
+    setMyChecked(checked)
+    changeMyFile(checked)
+  }
+
   useEffect(() => {
     const dirName = searchParams.get('name') as string
     setDirName(dirName)
@@ -83,7 +91,7 @@ const FileTable = (props: Props) => {
         </div>
         <div className="flex items-center">
           <div>
-            <Checkbox checked={myChecked} onChange={(e) => setMyChecked(e.target.checked)}>
+            <Checkbox checked={myChecked} onChange={(e) => changeCheckbox(e)}>
               仅展示我的
             </Checkbox>
           </div>

@@ -4,8 +4,10 @@ import api from '../../api'
 import { FileItem } from '../../types/file'
 import FileHeader from '../../components/file/FileHeader'
 import FileTable from '../../components/file/FileTable'
+import { LoginUser } from '../../api/modules/user/types'
 
 const Dir = () => {
+  const user: LoginUser['user'] = JSON.parse(localStorage.getItem('task-user') as string)
   const [fileList, setFileList] = useState<FileItem[]>([])
   const [searchParams] = useSearchParams()
 
@@ -22,6 +24,16 @@ const Dir = () => {
       })
   }
 
+  const changeMyFile = (val: boolean) => {
+    if (val) {
+      getFileList({
+        user_id: String(user.id)
+      })
+    } else {
+      getFileList()
+    }
+  }
+
   useEffect(() => {
     const dirId = Number(searchParams.get('id') as string)
     getFileList({
@@ -32,7 +44,7 @@ const Dir = () => {
   return (
     <div className="p-[30px] h-full w-full">
       <FileHeader getFileList={getFileList} />
-      <FileTable fileList={fileList} />
+      <FileTable fileList={fileList} changeMyFile={changeMyFile} />
     </div>
   )
 }
