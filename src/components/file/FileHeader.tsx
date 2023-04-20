@@ -3,7 +3,12 @@ import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import { Avatar, Input, Popover, Dropdown, MenuProps, Upload, message } from 'antd'
 import api from '../../api'
 
-const FileHeader = () => {
+interface Props {
+  getFileList: (params?: { user_id: string; name: string }) => void
+}
+
+const FileHeader = (props: Props) => {
+  const { getFileList } = props
   const [keyword, setKeyword] = useState('')
 
   const handleUpload = ({ file }: any) => {
@@ -16,6 +21,7 @@ const FileHeader = () => {
       .then((res) => {
         if (res.code === 200) {
           message.success(res.msg)
+          getFileList()
         } else {
           message.error(res.msg)
         }
@@ -127,7 +133,7 @@ const FileHeader = () => {
   }
 
   const clickMenu: MenuProps['onClick'] = ({ key }) => {
-    if (key === '2') {
+    if (key === '1') {
       //
     }
   }
