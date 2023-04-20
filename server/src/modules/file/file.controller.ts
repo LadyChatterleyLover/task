@@ -35,10 +35,20 @@ export class FileController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  async upload(@UploadedFile() file: UploadFile, @Req() req) {
+  async upload(
+    @UploadedFile() file: UploadFile,
+    @Body() params: { dirId: number },
+    @Req() req,
+  ) {
     const name = file.originalname
     const stream = bufferToStream(file.buffer)
-    return this.fileService.upload(name, stream, file, req.user.id)
+    return this.fileService.upload(
+      name,
+      stream,
+      file,
+      req.user.id,
+      params.dirId,
+    )
   }
 
   @Post()

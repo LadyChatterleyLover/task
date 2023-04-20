@@ -15,21 +15,25 @@ export class FileService {
   ) {
     this.client = new OSS(client)
   }
+
   async upload(
     name: string,
     stream: Readable,
     file: UploadFile,
     user_id: string,
+    dirId: number,
   ) {
     const size = file.size
     const ext = file.mimetype.split('/')[1]
-    const url = await this.uploadFile(name, stream)
+    const filename = decodeURIComponent(name)
+    const url = await this.uploadFile(filename, stream)
     const res = await this.fileRepository.save({
-      name,
+      name: filename,
       size,
       ext,
       url,
       user_id,
+      dirId,
     })
     if (res) {
       return {

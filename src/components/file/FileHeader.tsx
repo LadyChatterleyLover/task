@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import { Avatar, Input, Popover, Dropdown, MenuProps, Upload, Modal, Form, message } from 'antd'
 import api from '../../api'
@@ -9,21 +10,26 @@ interface Props {
 
 const FileHeader = (props: Props) => {
   const { getFileList } = props
+  const [searchParams] = useSearchParams()
   const [form] = Form.useForm()
   const [keyword, setKeyword] = useState('')
+  const [dirId, setDirId] = useState(0)
   const [visible, setVisible] = useState(false)
 
   const handleUpload = ({ file }: any) => {
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('file', file, decodeURIComponent(file.name))
     api.file
       .upload({
-        file
+        file,
+        dirId
       })
       .then((res) => {
         if (res.code === 200) {
           message.success(res.msg)
-          getFileList()
+          getFileList({
+            dirId
+          })
         } else {
           message.error(res.msg)
         }
@@ -176,6 +182,11 @@ const FileHeader = (props: Props) => {
       allowClear
     />
   )
+
+  useEffect(() => {
+    const dirId = Number(searchParams.get('id') as string)
+    setDirId(dirId)
+  }, [searchParams])
 
   return (
     <>

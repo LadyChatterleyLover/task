@@ -8,6 +8,7 @@ import File from '../pages/file/File'
 import Calendar from '../pages/calendar/Calendar'
 import Message from '../pages/message/Message'
 import Project from '../pages/project/Project'
+import Dir from '../pages/file/Dir'
 
 const Routes = () => {
   const element = useRoutes([
@@ -22,6 +23,10 @@ const Routes = () => {
         {
           path: '/file',
           element: <File />
+        },
+        {
+          path: '/file/dir',
+          element: <Dir />
         },
         {
           path: '/calendar',

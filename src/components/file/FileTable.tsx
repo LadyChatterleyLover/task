@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Checkbox, Empty, Image } from 'antd'
 import { MenuOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { FileItem } from '../../types/file'
@@ -9,8 +10,12 @@ interface Props {
 
 const FileTable = (props: Props) => {
   const { fileList } = props
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [myChecked, setMyChecked] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [dirName, setDirName] = useState('')
+
   const iconList = [
     {
       icon: <MenuOutlined />
@@ -36,18 +41,46 @@ const FileTable = (props: Props) => {
       return (
         <Image
           src="https://www.dootask.com/js/build/folder.68818161.svg"
-          preview={{ src: item.url }}
+          preview={false}
           width={64}
           height={64}
+          style={{ cursor: 'pointer' }}
         />
       )
     }
   }
 
+  const clickFile = (item: FileItem) => {
+    if (item.isDir) {
+      navigate(`/file/dir?id=${item.id}&name=${item.name}`)
+    }
+  }
+
+  useEffect(() => {
+    const dirName = searchParams.get('name') as string
+    setDirName(dirName)
+  }, [searchParams])
+
   return (
     <>
       <div className="mt-5 flex items-center justify-between">
-        <div>全部文件</div>
+        <div>
+          <span
+            style={{
+              color: dirName ? '#84c56a' : '',
+              cursor: dirName ? 'pointer' : 'default'
+            }}
+            onClick={() => navigate('/file')}
+          >
+            全部文件
+          </span>
+          {dirName ? (
+            <span>
+              <span className="mx-2">&gt;</span>
+              <span>{dirName}</span>
+            </span>
+          ) : null}
+        </div>
         <div className="flex items-center">
           <div>
             <Checkbox checked={myChecked} onChange={(e) => setMyChecked(e.target.checked)}>
@@ -80,6 +113,7 @@ const FileTable = (props: Props) => {
                 <div
                   key={item.id}
                   className="w-[100px] h-[124px] flex flex-col items-end justify-center"
+                  onClick={() => clickFile(item)}
                 >
                   <div className="flex justify-center w-full">{renderFile(item)}</div>
                   <div className="w-full text-center mt-2">{item.name}</div>
