@@ -5,7 +5,7 @@ import { Avatar, Input, Popover, Dropdown, MenuProps, Upload, Modal, Form, messa
 import api from '../../api'
 
 interface Props {
-  getFileList: (params?: { user_id?: string; name?: string; dirId?: number }) => void
+  getFileList: (params?: { user_id?: string; name?: string; dirId?: number | null }) => void
 }
 
 const FileHeader = (props: Props) => {
@@ -22,13 +22,13 @@ const FileHeader = (props: Props) => {
     api.file
       .upload({
         file,
-        dirId
+        dirId: dirId > 0 ? dirId : null
       })
       .then((res) => {
         if (res.code === 200) {
           message.success(res.msg)
           getFileList({
-            dirId
+            dirId: dirId > 0 ? dirId : null
           })
         } else {
           message.error(res.msg)
@@ -67,10 +67,12 @@ const FileHeader = (props: Props) => {
     {
       key: '3',
       label: (
-        <div className="flex">
-          <img src="https://www.dootask.com/js/build/updir.354f6e04.svg" width={20} height={20} />
-          <div className="ml-1">上传文件夹</div>
-        </div>
+        <Upload showUploadList={false} customRequest={handleUpload} directory>
+          <div className="flex">
+            <img src="https://www.dootask.com/js/build/updir.354f6e04.svg" width={20} height={20} />
+            <div className="ml-1">上传文件夹</div>
+          </div>
+        </Upload>
       )
     },
     {

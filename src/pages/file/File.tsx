@@ -7,7 +7,7 @@ import { FileItem } from '../../types/file'
 const File = () => {
   const [fileList, setFileList] = useState<FileItem[]>([])
 
-  const getFileList = (params?: { user_id?: string; name?: string; dirId?: number }) => {
+  const getFileList = (params?: { user_id?: string; name?: string; dirId?: number | null }) => {
     api.file.getFileList(params).then((res) => {
       if (res.code === 200) {
         setFileList(res.data)

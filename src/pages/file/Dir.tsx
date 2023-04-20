@@ -9,8 +9,8 @@ const Dir = () => {
   const [fileList, setFileList] = useState<FileItem[]>([])
   const [searchParams] = useSearchParams()
 
-  const getFileList = (params?: { user_id?: string; name?: string; dirId?: number }) => {
-    const { dirId } = params as { user_id?: string; name?: string; dirId?: number }
+  const getFileList = (params?: { user_id?: string; name?: string; dirId?: number | null }) => {
+    const { dirId } = params as { user_id?: string; name?: string; dirId?: number | null }
     api.file
       .getFileList({
         dirId
