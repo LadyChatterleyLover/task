@@ -4,7 +4,7 @@ import { Readable } from 'node:stream'
 import client from '../../config/oss'
 import { InjectRepository } from '@nestjs/typeorm'
 import { File } from './entities/file.entity'
-import { Repository } from 'typeorm'
+import { Like, Repository } from 'typeorm'
 import { UploadFile } from './dto/file.dto'
 
 @Injectable()
@@ -57,11 +57,48 @@ export class FileService {
     return res.url
   }
 
-  async findAll(user_id: string, name: string) {
+  async createDir(name: string, user_id: string) {
+    const existDir = await this.fileRepository.findOne({
+      where: {
+        name,
+        isDir: true,
+        user_id,
+      },
+    })
+    if (existDir) {
+      return {
+        code: 500,
+        msg: '文件夹已存在',
+      }
+    }
+    const data = await this.fileRepository.save({
+      name,
+      isDir: true,
+      user_id,
+    })
+    if (data) {
+      return {
+        code: 200,
+        msg: '创建成功',
+        data,
+      }
+    } else {
+      return {
+        code: 500,
+        msg: '创建失败',
+      }
+    }
+  }
+
+  async findAll(user_id: string, name = '', dirId: number) {
     const data = await this.fileRepository.find({
       where: {
+        name: Like(`%${name}%`),
         user_id,
-        name,
+        dirId,
+      },
+      order: {
+        isDir: 'DESC',
       },
     })
     return {

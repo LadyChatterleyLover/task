@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
-import { Avatar, Input, Popover, Dropdown, MenuProps, Upload, message } from 'antd'
+import { Avatar, Input, Popover, Dropdown, MenuProps, Upload, Modal, Form, message } from 'antd'
 import api from '../../api'
 
 interface Props {
-  getFileList: (params?: { user_id: string; name: string }) => void
+  getFileList: (params?: { user_id?: string; name?: string; dirId?: number }) => void
 }
 
 const FileHeader = (props: Props) => {
   const { getFileList } = props
+  const [form] = Form.useForm()
   const [keyword, setKeyword] = useState('')
+  const [visible, setVisible] = useState(false)
 
   const handleUpload = ({ file }: any) => {
     const formData = new FormData()
@@ -129,13 +131,40 @@ const FileHeader = (props: Props) => {
   ]
 
   const onPressEnter = () => {
-    //
+    getFileList({
+      name: keyword
+    })
   }
 
   const clickMenu: MenuProps['onClick'] = ({ key }) => {
     if (key === '1') {
-      //
+      setVisible(true)
     }
+  }
+
+  const createDir = () => {
+    form
+      .validateFields()
+      .then(() => {
+        const values = form.getFieldsValue()
+        api.file
+          .createDir(values)
+          .then((res) => {
+            if (res.code === 200) {
+              message.success(res.msg)
+              setVisible(false)
+              getFileList()
+            } else {
+              message.error(res.msg)
+            }
+          })
+          .catch(() => {
+            setVisible(false)
+          })
+      })
+      .catch(() => {
+        message.error('表单填写有误,请检查')
+      })
   }
 
   const content = (
@@ -169,6 +198,29 @@ const FileHeader = (props: Props) => {
           </div>
         </div>
       </div>
+      <Modal
+        title="新建文件夹"
+        open={visible}
+        destroyOnClose
+        onOk={createDir}
+        onCancel={() => {
+          setVisible(false)
+          form.resetFields()
+        }}
+      >
+        <Form form={form}>
+          <Form.Item
+            label="文件夹名称"
+            name="name"
+            rules={[
+              { required: true, message: '文件夹名称不能为空' },
+              { min: 2, message: '文件夹名称不能少于2个字' }
+            ]}
+          >
+            <Input placeholder="文件夹名称" allowClear autoComplete="off" />
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   )
 }

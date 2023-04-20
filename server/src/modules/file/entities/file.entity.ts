@@ -16,10 +16,10 @@ export class File {
   @Column()
   name: string
 
-  @Column()
+  @Column({ default: '' })
   ext: string
 
-  @Column()
+  @Column({ default: '' })
   url: string
 
   @Column({ default: false })

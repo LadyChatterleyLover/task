@@ -36,14 +36,20 @@ export class FileController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async upload(@UploadedFile() file: UploadFile, @Req() req) {
-    console.log('file', file)
     const name = file.originalname
     const stream = bufferToStream(file.buffer)
     return this.fileService.upload(name, stream, file, req.user.id)
   }
 
   @Post()
-  async findAll(@Body() params: { user_id: string; name: string }) {
-    return this.fileService.findAll(params.user_id, params.name)
+  async findAll(
+    @Body() params: { user_id: string; name: string; dirId: number },
+  ) {
+    return this.fileService.findAll(params.user_id, params.name, params.dirId)
+  }
+
+  @Post('/createDir')
+  async createDir(@Body() params: { name: string }, @Req() req) {
+    return this.fileService.createDir(params.name, req.user.id)
   }
 }

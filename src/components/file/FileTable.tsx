@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Checkbox, Empty } from 'antd'
+import { Checkbox, Empty, Image } from 'antd'
 import { MenuOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { FileItem } from '../../types/file'
 
@@ -24,7 +24,22 @@ const FileTable = (props: Props) => {
   const renderFile = (item: FileItem) => {
     if (imgType.includes(item.ext.toLowerCase())) {
       return (
-        <img src="https://www.dootask.com/js/build/picture.eff6e480.svg" width={64} height={64} />
+        <Image
+          src="https://www.dootask.com/js/build/picture.eff6e480.svg"
+          preview={{ src: item.url }}
+          width={64}
+          height={64}
+        />
+      )
+    }
+    if (item.isDir) {
+      return (
+        <Image
+          src="https://www.dootask.com/js/build/folder.68818161.svg"
+          preview={{ src: item.url }}
+          width={64}
+          height={64}
+        />
       )
     }
   }
