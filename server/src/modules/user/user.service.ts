@@ -113,4 +113,19 @@ export class UserService {
       total: res.tasks.length,
     }
   }
+
+  async findFile(id: number) {
+    const res: any = await this.usersRepository
+      .createQueryBuilder('user')
+      .innerJoinAndSelect('user.file', 'file')
+      .leftJoinAndSelect('file.user', 'users')
+      .where('user.id = :id', { id })
+      .getOne()
+    return {
+      code: 200,
+      msg: '获取成功',
+      data: res.file,
+      total: res.file.length,
+    }
+  }
 }

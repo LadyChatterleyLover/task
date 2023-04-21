@@ -54,6 +54,21 @@ const FileTable = (props: Props) => {
       align: 'center',
       sorter: true,
       render: (_, record) => <div>{!record.ext ? '文件夹' : record.ext}</div>
+    },
+    {
+      title: '所有者',
+      key: 'user',
+      dataIndex: 'user',
+      align: 'center',
+      sorter: true,
+      render: (_, record) => <div>{record.user.username}</div>
+    },
+    {
+      title: '最后修改',
+      key: 'updateAt',
+      dataIndex: 'updateAt',
+      align: 'center',
+      sorter: true
     }
   ]
 

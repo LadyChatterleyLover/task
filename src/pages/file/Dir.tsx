@@ -24,10 +24,22 @@ const Dir = () => {
       })
   }
 
+  const getUserFile = (params: { user_id: number }) => {
+    api.user
+      .findFile({
+        id: params.user_id
+      })
+      .then((res) => {
+        if (res.code === 200) {
+          setFileList(res.data)
+        }
+      })
+  }
+
   const changeMyFile = (val: boolean) => {
     if (val) {
-      getFileList({
-        user_id: String(user.id)
+      getUserFile({
+        user_id: user.id
       })
     } else {
       getFileList()

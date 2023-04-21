@@ -1,6 +1,7 @@
 import { LoginUser } from './types'
 import { get, post } from '../../request'
 import { TaskItem } from '../../../types/task'
+import { FileItem } from '../../../types/file'
 
 export default {
   login(params: { username: string; password: string }) {
@@ -14,5 +15,8 @@ export default {
   },
   findTask(params: { id: number }) {
     return post<TaskItem[]>('/user/task', params)
+  },
+  findFile(params: { id: number }) {
+    return post<FileItem[]>('/user/file', params)
   }
 }

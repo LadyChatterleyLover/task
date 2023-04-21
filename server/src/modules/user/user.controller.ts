@@ -30,4 +30,9 @@ export class UserController {
   async findTask(@Body() params: { id: number }) {
     return this.userService.findTask(params.id)
   }
+
+  @Post('file')
+  async findFile(@Body() params: { id: number }) {
+    return this.userService.findFile(params.id)
+  }
 }

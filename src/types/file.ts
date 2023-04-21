@@ -1,9 +1,11 @@
+import { LoginUser } from '../api/modules/user/types'
+
 export interface FileItem {
   id: number
   name: string
   url: string
   ext: string
-  user_id: string
+  user: LoginUser['user']
   isDir: boolean
   dirId: number
   size: number
