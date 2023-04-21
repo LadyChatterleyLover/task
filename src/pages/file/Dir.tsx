@@ -19,6 +19,10 @@ const Dir = () => {
       })
       .then((res) => {
         if (res.code === 200) {
+          res.data.map((item) => {
+            item.checked = false
+            item.hovered = false
+          })
           setFileList(res.data)
         }
       })
@@ -31,6 +35,10 @@ const Dir = () => {
       })
       .then((res) => {
         if (res.code === 200) {
+          res.data.map((item) => {
+            item.checked = false
+            item.hovered = false
+          })
           setFileList(res.data)
         }
       })

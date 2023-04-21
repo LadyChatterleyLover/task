@@ -11,4 +11,6 @@ export interface FileItem {
   size: number
   createAt: string
   updateAt: string
+  checked: boolean
+  hovered: boolean
 }

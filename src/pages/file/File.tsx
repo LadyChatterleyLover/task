@@ -12,6 +12,10 @@ const File = () => {
   const getFileList = (params?: { user_id?: string; name?: string; dirId?: number | null }) => {
     api.file.getFileList(params).then((res) => {
       if (res.code === 200) {
+        res.data.map((item) => {
+          item.checked = false
+          item.hovered = false
+        })
         setFileList(res.data)
       }
     })
@@ -24,6 +28,10 @@ const File = () => {
       })
       .then((res) => {
         if (res.code === 200) {
+          res.data.map((item) => {
+            item.checked = false
+            item.hovered = false
+          })
           setFileList(res.data)
         }
       })
