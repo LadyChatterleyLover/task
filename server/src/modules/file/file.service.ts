@@ -6,12 +6,14 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { File } from './entities/file.entity'
 import { Like, Repository } from 'typeorm'
 import { UploadFile } from './dto/file.dto'
+import { User } from '../user/entities/user.entity'
 
 @Injectable()
 export class FileService {
   public client
   constructor(
     @InjectRepository(File) private readonly fileRepository: Repository<File>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {
     this.client = new OSS(client)
   }
@@ -27,12 +29,17 @@ export class FileService {
     const ext = file.mimetype.split('/')[1]
     const filename = decodeURIComponent(name)
     const url = await this.uploadFile(filename, stream)
+    const user = await this.userRepository.findOne({
+      where: {
+        id: +user_id,
+      },
+    })
     const res = await this.fileRepository.save({
       name: filename,
       size,
       ext,
       url,
-      user_id,
+      user,
       dirId,
     })
     if (res) {
@@ -62,11 +69,15 @@ export class FileService {
   }
 
   async createDir(name: string, user_id: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: +user_id,
+      },
+    })
     const existDir = await this.fileRepository.findOne({
       where: {
         name,
         isDir: true,
-        user_id,
       },
     })
     if (existDir) {
@@ -78,7 +89,7 @@ export class FileService {
     const data = await this.fileRepository.save({
       name,
       isDir: true,
-      user_id,
+      user,
     })
     if (data) {
       return {
@@ -94,16 +105,16 @@ export class FileService {
     }
   }
 
-  async findAll(user_id: string, name = '', dirId: number) {
+  async findAll(name = '', dirId: number) {
     const data = await this.fileRepository.find({
       where: {
         name: Like(`%${name}%`),
-        user_id,
         dirId,
       },
       order: {
         isDir: 'DESC',
       },
+      relations: ['user'],
     })
     return {
       code: 200,

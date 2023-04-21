@@ -52,10 +52,8 @@ export class FileController {
   }
 
   @Post()
-  async findAll(
-    @Body() params: { user_id: string; name: string; dirId: number },
-  ) {
-    return this.fileService.findAll(params.user_id, params.name, params.dirId)
+  async findAll(@Body() params: { name: string; dirId: number }) {
+    return this.fileService.findAll(params.name, params.dirId)
   }
 
   @Post('/createDir')

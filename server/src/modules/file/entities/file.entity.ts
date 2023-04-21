@@ -29,8 +29,7 @@ export class File {
   dirId: number
 
   @ManyToOne(() => User, (user) => user.file)
-  @Column()
-  user_id: string
+  user: User
 
   @Column({ default: 0 })
   size: number

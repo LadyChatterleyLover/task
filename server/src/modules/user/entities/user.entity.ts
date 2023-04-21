@@ -42,7 +42,7 @@ export class User {
   @ManyToMany(() => Project, (project) => project.users)
   project: Task[]
 
-  @OneToMany(() => File, (file) => file.user_id)
+  @OneToMany(() => File, (file) => file.user)
   file: File[]
 
   @CreateDateColumn()

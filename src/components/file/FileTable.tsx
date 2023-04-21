@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Checkbox, Empty, Image } from 'antd'
+import { Table, Checkbox, Empty, Image, TableColumnProps } from 'antd'
 import { MenuOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { FileItem } from '../../types/file'
 import { CheckboxChangeEvent } from 'antd/es/checkbox'
@@ -15,8 +15,9 @@ const FileTable = (props: Props) => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [myChecked, setMyChecked] = useState(false)
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(1)
   const [dirName, setDirName] = useState('')
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
   const iconList = [
     {
@@ -27,6 +28,44 @@ const FileTable = (props: Props) => {
     }
   ]
   const imgType = ['jpg', 'jpeg', 'png', 'gif']
+
+  const columns: TableColumnProps<FileItem>[] = [
+    {
+      title: '文件名',
+      key: 'name',
+      dataIndex: 'name',
+      align: 'center',
+      sorter: true
+    },
+    {
+      title: '大小',
+      key: 'size',
+      dataIndex: 'size',
+      align: 'center',
+      sorter: true,
+      render: (_, record) => (
+        <div>{record.size === 0 ? '-' : <span>{(record.size / 1024).toFixed(2)}kb</span>}</div>
+      )
+    },
+    {
+      title: '类型',
+      key: 'ext',
+      dataIndex: 'ext',
+      align: 'center',
+      sorter: true,
+      render: (_, record) => <div>{!record.ext ? '文件夹' : record.ext}</div>
+    }
+  ]
+
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log('selectedRowKeys changed: ', newSelectedRowKeys)
+    setSelectedRowKeys(newSelectedRowKeys)
+  }
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange
+  }
 
   const renderFile = (item: FileItem) => {
     if (imgType.includes(item.ext.toLowerCase())) {
@@ -115,20 +154,32 @@ const FileTable = (props: Props) => {
       </div>
       <div className="mt-5">
         {fileList.length ? (
-          <div className="flex items-center flex-wrap">
-            {fileList.map((item) => {
-              return (
-                <div
-                  key={item.id}
-                  className="w-[100px] h-[124px] flex flex-col items-end justify-center"
-                  onClick={() => clickFile(item)}
-                >
-                  <div className="flex justify-center w-full">{renderFile(item)}</div>
-                  <div className="w-full text-center mt-2">{item.name}</div>
-                </div>
-              )
-            })}
-          </div>
+          currentIndex === 0 ? (
+            <div className="flex items-center flex-wrap">
+              {fileList.map((item) => {
+                return (
+                  <div
+                    key={item.id}
+                    className="w-[100px] h-[124px] flex flex-col items-end justify-center"
+                    onClick={() => clickFile(item)}
+                  >
+                    <div className="flex justify-center w-full">{renderFile(item)}</div>
+                    <div className="w-full text-center mt-2">{item.name}</div>
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div>
+              <Table
+                rowKey="id"
+                dataSource={fileList}
+                columns={columns}
+                rowSelection={rowSelection}
+                pagination={false}
+              ></Table>
+            </div>
+          )
         ) : (
           <div className="mt-[200px]">
             <Empty></Empty>
