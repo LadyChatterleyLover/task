@@ -56,8 +56,13 @@ export class FileController {
     return this.fileService.findAll(params.name, params.dirId)
   }
 
-  @Post('/createDir')
+  @Post('createDir')
   async createDir(@Body() params: { name: string }, @Req() req) {
     return this.fileService.createDir(params.name, req.user.id)
+  }
+
+  @Post('patchDelete')
+  async patchDelete(@Body() params: { ids: number[] }) {
+    return this.fileService.patchDelete(params.ids)
   }
 }

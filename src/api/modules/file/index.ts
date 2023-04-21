@@ -10,5 +10,8 @@ export default {
   },
   createDir(params: { name: string }) {
     return post<FileItem[]>('/file/createDir', params)
+  },
+  patchDelete(params: { ids: number[] }) {
+    return post('/file/patchDelete', params)
   }
 }

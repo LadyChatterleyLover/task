@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Table, Checkbox, Empty, Image, TableColumnProps } from 'antd'
-import { MenuOutlined, UnorderedListOutlined } from '@ant-design/icons'
+import { Table, Checkbox, Empty, Image, TableColumnProps, Tag, Modal, message } from 'antd'
+import {
+  DeleteOutlined,
+  ExclamationCircleFilled,
+  MenuOutlined,
+  UnorderedListOutlined
+} from '@ant-design/icons'
 import { FileItem } from '../../types/file'
 import { CheckboxChangeEvent } from 'antd/es/checkbox'
+import api from '../../api'
+import dayjs from 'dayjs'
 
+const { confirm } = Modal
 interface Props {
   fileList: FileItem[]
   changeMyFile: (val: boolean) => void
@@ -35,7 +43,13 @@ const FileTable = (props: Props) => {
       key: 'name',
       dataIndex: 'name',
       align: 'center',
-      sorter: true
+      sorter: true,
+      render: (_, record) => (
+        <div className="flex items-center">
+          <div>{renderFile(record, 22, 22)}</div>
+          <div className="ml-[6px]">{record.name}</div>
+        </div>
+      )
     },
     {
       title: '大小',
@@ -68,12 +82,12 @@ const FileTable = (props: Props) => {
       key: 'updateAt',
       dataIndex: 'updateAt',
       align: 'center',
-      sorter: true
+      sorter: true,
+      render: (_, record) => <div>{dayjs(record.updateAt).format('YYYY-MM-DD HH:mm:ss')}</div>
     }
   ]
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys)
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
@@ -82,14 +96,14 @@ const FileTable = (props: Props) => {
     onChange: onSelectChange
   }
 
-  const renderFile = (item: FileItem) => {
+  const renderFile = (item: FileItem, width = 64, height = 64) => {
     if (imgType.includes(item.ext.toLowerCase())) {
       return (
         <Image
           src="https://www.dootask.com/js/build/picture.eff6e480.svg"
           preview={{ src: item.url }}
-          width={64}
-          height={64}
+          width={width}
+          height={height}
         />
       )
     }
@@ -98,8 +112,8 @@ const FileTable = (props: Props) => {
         <Image
           src="https://www.dootask.com/js/build/folder.68818161.svg"
           preview={false}
-          width={64}
-          height={64}
+          width={width}
+          height={height}
           style={{ cursor: 'pointer' }}
         />
       )
@@ -116,6 +130,31 @@ const FileTable = (props: Props) => {
     const checked = e.target.checked
     setMyChecked(checked)
     changeMyFile(checked)
+  }
+
+  const deleleFile = () => {
+    confirm({
+      title: `删除文件`,
+      icon: <ExclamationCircleFilled />,
+      content: `您确定删除${selectedRowKeys.length}个文件吗?`,
+      onOk() {
+        api.file
+          .patchDelete({
+            ids: selectedRowKeys as number[]
+          })
+          .then((res) => {
+            if (res.code === 200) {
+              message.success(res.msg)
+              changeMyFile(myChecked)
+            } else {
+              message.error(res.msg)
+            }
+          })
+      },
+      onCancel() {
+        message.info('已取消删除')
+      }
+    })
   }
 
   useEffect(() => {
@@ -141,6 +180,20 @@ const FileTable = (props: Props) => {
               <span className="mx-2">&gt;</span>
               <span>{dirName}</span>
             </span>
+          ) : null}
+          {selectedRowKeys.length ? (
+            <>
+              <span className="ml-2 cursor-pointer">
+                <Tag color="red" icon={<DeleteOutlined />} onClick={deleleFile}>
+                  删除
+                </Tag>
+              </span>
+              <span className="ml-2 cursor-pointer">
+                <Tag color="#87d068" onClick={() => setSelectedRowKeys([])}>
+                  取消选择
+                </Tag>
+              </span>
+            </>
           ) : null}
         </div>
         <div className="flex items-center">

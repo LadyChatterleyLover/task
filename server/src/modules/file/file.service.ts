@@ -122,4 +122,23 @@ export class FileService {
       data,
     }
   }
+
+  async patchDelete(ids: number[]) {
+    const res = await this.fileRepository
+      .createQueryBuilder('file')
+      .delete()
+      .whereInIds(ids)
+      .execute()
+    if (res) {
+      return {
+        code: 200,
+        msg: '删除成功',
+      }
+    } else {
+      return {
+        code: 500,
+        msg: '删除失败',
+      }
+    }
+  }
 }
