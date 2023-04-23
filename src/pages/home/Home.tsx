@@ -5,8 +5,8 @@ import { FileTextOutlined } from '@ant-design/icons'
 import api from '../../api'
 import { TaskItem } from '../../types/task'
 import dayjs from 'dayjs'
-import { Tag, Tooltip } from 'antd'
-import TaskSetting from '../../components/project/TaskSetting'
+import { Tag } from 'antd'
+import Task from '../../components/home/Task'
 
 const Home = () => {
   const user = JSON.parse(localStorage.getItem('task-user') as string) as LoginUser['user']
@@ -36,23 +36,6 @@ const Home = () => {
         )
         setUncompleteList(res.data.filter((item) => item.status !== 4))
       })
-  }
-
-  const renderStatus = (status: number) => {
-    switch (status) {
-      case 0:
-        return <Tag color="#ff7070">待处理</Tag>
-      case 1:
-        return <Tag color="#fc984b">进行中</Tag>
-      case 2:
-        return <Tag color="#2f99ec">待测试</Tag>
-      case 3:
-        return <Tag color="#0bc037">已完成</Tag>
-      case 4:
-        return <Tag color="gold">已取消</Tag>
-      default:
-        break
-    }
   }
 
   const diffTime = (time: string) => {
@@ -153,30 +136,7 @@ const Home = () => {
           <div>
             <div className="font-bold text-base">超期任务</div>
             <div className="mt-4">
-              {overTaskList.map((item) => {
-                return (
-                  <div
-                    key={item.id}
-                    className="relative flex items-center p-3 mb-2 rounded-md cursor-pointer"
-                  >
-                    <div>
-                      <TaskSetting task={item} getTaskDetail={getTaskList}>
-                        <div
-                          className="w-4 h-4 cursor-pointer mr-3"
-                          style={{ border: '1px solid #eee' }}
-                          onClick={(e) => e.stopPropagation()}
-                        ></div>
-                      </TaskSetting>
-                    </div>
-                    <div className="absolute top-[18px] left-0 w-[2px] h-[12px] bg-[#ed4014]"></div>
-                    {renderStatus(item.status)}
-                    <div className="text-sm flex-1 ml-1">{item.name}</div>
-                    <Tooltip title={item.endTime} placement="right">
-                      <div>{item.diffTime}</div>
-                    </Tooltip>
-                  </div>
-                )
-              })}
+              <Task taskList={overTaskList} getTaskList={getTaskList}></Task>
             </div>
           </div>
         ) : null}
@@ -184,30 +144,7 @@ const Home = () => {
           <div>
             <div className="font-bold text-base mt-5">待完成任务</div>
             <div className="mt-4">
-              {uncompleteList.map((item) => {
-                return (
-                  <div
-                    key={item.id}
-                    className="relative flex items-center p-3 mb-2 rounded-md cursor-pointer"
-                  >
-                    <div>
-                      <TaskSetting task={item} getTaskDetail={getTaskList}>
-                        <div
-                          className="w-4 h-4 cursor-pointer mr-3"
-                          style={{ border: '1px solid #eee' }}
-                          onClick={(e) => e.stopPropagation()}
-                        ></div>
-                      </TaskSetting>
-                    </div>
-                    <div className="absolute top-[18px] left-0 w-[2px] h-[12px] bg-[#ed4014]"></div>
-                    {renderStatus(item.status)}
-                    <div className="text-sm flex-1 ml-1">{item.name}</div>
-                    <Tooltip title={item.endTime} placement="right">
-                      <div>{item.diffTime}</div>
-                    </Tooltip>
-                  </div>
-                )
-              })}
+              <Task taskList={uncompleteList} getTaskList={getTaskList}></Task>
             </div>
           </div>
         ) : null}
