@@ -19,3 +19,23 @@ body,
 .fc-event {
   border: none;
 }
+.fc-toolbar-chunk {
+  display: flex;
+  align-items: center;
+}
+.fc-button-primary {
+  background: #fff !important;
+  color: #888 !important;
+  border-color: #eee !important;
+}
+.fc-button-active {
+  background: #84c56a !important;
+  color: #fff !important;
+}
+.fc-button-active:focus,
+.fc-button-active:active {
+  box-shadow: none !important;
+}
+.fc-button-primary:not(:disabled):active:focus {
+  box-shadow: none !important;
+}
