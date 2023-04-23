@@ -151,7 +151,14 @@ const PorjectList = forwardRef((props: Props, ref) => {
           新建项目
         </Button>
       </div>
-      <Modal open={visible} title="新建项目" okText="添加" onOk={onOk} onCancel={onCancel}>
+      <Modal
+        open={visible}
+        title="新建项目"
+        okText="添加"
+        maskClosable={false}
+        onOk={onOk}
+        onCancel={onCancel}
+      >
         <Form form={form}>
           <Form.Item
             name="name"

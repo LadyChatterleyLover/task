@@ -214,6 +214,7 @@ const FileHeader = (props: Props) => {
       <Modal
         title="新建文件夹"
         open={visible}
+        maskClosable={false}
         destroyOnClose
         onOk={createDir}
         onCancel={() => {

@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import FullCalendar, { EventItem } from '../../components/calendar/FullCalendar'
+import FullCalendar from '@fullcalendar/react'
 import { LoginUser } from '../../api/modules/user/types'
 import api from '../../api'
 import dayjs from 'dayjs'
-import { DayCellContentArg, EventContentArg } from '@fullcalendar/core'
+import { EventContentArg, EventInput } from '@fullcalendar/core'
 import { TaskItem } from '../../types/task'
 import { Popover, Tag, Modal, message } from 'antd'
 import ReactDOM from 'react-dom/client'
 import { DeleteOutlined, ExclamationCircleFilled, ProfileOutlined } from '@ant-design/icons'
-import { EventImpl } from '@fullcalendar/core/internal'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import UpdateTask from '../../components/project/UpdateTask'
 
 const { confirm } = Modal
 
 const Calendar = () => {
   const user = JSON.parse(localStorage.getItem('task-user') as string) as LoginUser['user']
-  const [events, setEvents] = useState<EventItem[]>([])
+  const [events, setEvents] = useState<EventInput[]>([])
+  const [visible, setVisible] = useState(false)
+  const [currentTask, setCurrentTask] = useState<TaskItem>()
 
   const getTaskList = () => {
     api.user
@@ -26,8 +29,10 @@ const Calendar = () => {
           title: item.name,
           start: item.startTime,
           end: item.endTime,
-          taskId: item.id,
-          ...item
+          extendedProps: {
+            ...item,
+            taskId: item.id
+          }
         }))
         setEvents(events)
       })
@@ -63,14 +68,19 @@ const Calendar = () => {
     }
   }
 
-  const deleteTask = (extendedProps: TaskItem & { taskId: number }) => {
+  const handleUpdateTask = (extendedProps: TaskItem) => {
+    setCurrentTask(extendedProps)
+    setVisible(true)
+  }
+
+  const deleteTask = (extendedProps: TaskItem) => {
     confirm({
       title: '删除任务',
       icon: <ExclamationCircleFilled />,
       content: `您确定要删除任务 [${extendedProps.name}] 吗?`,
       okType: 'danger',
       onOk() {
-        api.task.deleteTask(extendedProps.taskId).then((res) => {
+        api.task.deleteTask(extendedProps.id).then((res) => {
           if (res.code === 200) {
             message.success(res.msg)
             getTaskList()
@@ -86,7 +96,7 @@ const Calendar = () => {
   }
 
   const content = (arg: EventContentArg) => {
-    const extendedProps = arg.event._def.extendedProps as TaskItem & { taskId: number }
+    const extendedProps = arg.event._def.extendedProps as TaskItem
     const start = dayjs(arg.event._instance?.range.start).format('YYYY-MM-DD HH:mm:ss')
     const end = dayjs(arg.event._instance?.range.end).format('YYYY-MM-DD HH:mm:ss')
     const diff = dayjs(end).diff(dayjs())
@@ -110,6 +120,7 @@ const Calendar = () => {
           <div
             className="flex-1 flex justify-center items-center cursor-pointer"
             style={{ borderRight: '1px solid #eee' }}
+            onClick={() => handleUpdateTask(extendedProps)}
           >
             <div className="mr-2">
               <ProfileOutlined />
@@ -132,12 +143,12 @@ const Calendar = () => {
 
   const eventContent = (arg: EventContentArg) => {
     const el = document.createElement('div')
-    const extendedProps = arg.event._def.extendedProps as TaskItem & { taskId: number }
+    const extendedProps = arg.event._def.extendedProps as TaskItem
     const end = dayjs(arg.event._instance?.range.end).format('YYYY-MM-DD HH:mm:ss')
     const diff = dayjs(end).diff(dayjs())
     const root = ReactDOM.createRoot(el)
     root.render(
-      <Popover trigger="click" content={content(arg)} placement="left" key={extendedProps.taskId}>
+      <Popover trigger="click" content={content(arg)} placement="left" key={extendedProps.id}>
         <div
           className="flex py-[6px] px-[10px] font-bold cursor-pointer"
           style={{
@@ -154,7 +165,8 @@ const Calendar = () => {
       </Popover>
     )
     return {
-      domNodes: [el]
+      domNodes: [el],
+      progressiveEventRendering: true
     }
   }
 
@@ -164,7 +176,13 @@ const Calendar = () => {
 
   return (
     <div className="p-5">
-      <FullCalendar events={events} eventContent={eventContent} />
+      <FullCalendar plugins={[dayGridPlugin]} events={events} eventContent={eventContent} />
+      <UpdateTask
+        task={currentTask as TaskItem}
+        visible={visible}
+        setVisible={setVisible}
+        getTaskDetail={getTaskList}
+      />
     </div>
   )
 }

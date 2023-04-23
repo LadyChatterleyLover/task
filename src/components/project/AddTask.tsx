@@ -58,6 +58,7 @@ const AddTask = (props: Props) => {
     <Modal
       open={visible}
       title="添加任务"
+      maskClosable={false}
       destroyOnClose
       onOk={addTask}
       onCancel={() => {

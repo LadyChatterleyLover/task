@@ -13,6 +13,9 @@ dependencies:
   '@fullcalendar/interaction':
     specifier: ^6.1.5
     version: 6.1.5(@fullcalendar/core@6.1.5)
+  '@fullcalendar/react':
+    specifier: ^6.1.5
+    version: 6.1.5(@fullcalendar/core@6.1.5)(react-dom@18.2.0)(react@18.2.0)
   antd:
     specifier: ^5.4.2
     version: 5.4.2(react-dom@18.2.0)(react@18.2.0)
@@ -1087,6 +1090,21 @@ packages:
       '@fullcalendar/core': ~6.1.5
     dependencies:
       '@fullcalendar/core': 6.1.5
+    dev: false
+
+  /@fullcalendar/react@6.1.5(@fullcalendar/core@6.1.5)(react-dom@18.2.0)(react@18.2.0):
+    resolution:
+      {
+        integrity: sha512-OVQJQhtDAwxHbFk84bm5Y6iGLjGDrrBgr3491JbfnqHUjSaO+T1rNHUvtnot0X4/ZdnoxWr2nKqxPxpmCCL/lw==
+      }
+    peerDependencies:
+      '@fullcalendar/core': ~6.1.5
+      react: ^16.7.0 || ^17 || ^18
+      react-dom: ^16.7.0 || ^17 || ^18
+    dependencies:
+      '@fullcalendar/core': 6.1.5
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /@humanwhocodes/config-array@0.11.8:

@@ -9,7 +9,7 @@ import api from '../../api'
 const { RangePicker } = DatePicker
 
 interface Props {
-  project: ProjectItem
+  project?: ProjectItem
   task: TaskItem
   visible: boolean
   setVisible: (val: boolean) => void
@@ -57,13 +57,19 @@ const UpdateTask = (props: Props) => {
         desc: task.desc,
         level: task.level,
         time: [dayjs(task.startTime), dayjs(task.endTime)],
-        users: task.users.map((item) => item.id)
+        users: task.users && task.users.length && task.users.map((item) => item.id)
       })
     }
   }, [task])
 
   return task ? (
-    <Modal title={task.name} open={visible} onOk={confirm} onCancel={() => setVisible(false)}>
+    <Modal
+      title={task.name}
+      open={visible}
+      onOk={confirm}
+      onCancel={() => setVisible(false)}
+      maskClosable={false}
+    >
       <Form form={form}>
         <Form.Item name="name" rules={[{ required: true, message: '任务名称不能为空' }]}>
           <Input placeholder="任务名称" allowClear />

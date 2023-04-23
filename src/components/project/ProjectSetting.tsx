@@ -145,6 +145,7 @@ const ProjectSetting = (props: Props) => {
         title="项目设置"
         open={settingVisible}
         destroyOnClose
+        maskClosable={false}
         onOk={settingConfirm}
         onCancel={() => setSettingVisible(false)}
       >
