@@ -25,16 +25,16 @@ const Home = () => {
         setTodayTaskList(
           res.data.filter((item) => {
             const diff = dayjs(item.endTime).diff(dayjs().startOf('day'))
-            return diff >= 0 && diff < 1000 * 60 * 60 * 24
+            return diff >= 0 && diff < 1000 * 60 * 60 * 24 && item.status !== 3
           })
         )
         setOverTaskList(
           res.data.filter((item) => {
             const diff = dayjs(item.endTime).diff(dayjs().startOf('day'))
-            return diff < 0
+            return diff < 0 && item.status !== 3
           })
         )
-        setUncompleteList(res.data.filter((item) => item.status !== 4))
+        setUncompleteList(res.data.filter((item) => item.status !== 3))
       })
   }
 

@@ -35,38 +35,35 @@ const Task = (props: Props) => {
     <>
       <div className="mt-[60px] w-[660px] max-h-[80%] mx-auto">
         {taskList.length ? (
-          <div>
-            <div className="font-bold text-base">超期任务</div>
-            <div className="mt-4">
-              {taskList.map((item) => {
-                return (
-                  <div
-                    key={item.id}
-                    className="relative flex items-center p-3 mb-2 rounded-md cursor-pointer"
-                    onClick={() => {
-                      setCurrentTask(item)
-                      setVisible(true)
-                    }}
-                  >
-                    <div onClick={(e) => e.stopPropagation()}>
-                      <TaskSetting task={item} getTaskDetail={getTaskList}>
-                        <div
-                          className="w-4 h-4 cursor-pointer mr-3"
-                          style={{ border: '1px solid #eee' }}
-                          onClick={(e) => e.stopPropagation()}
-                        ></div>
-                      </TaskSetting>
-                    </div>
-                    <div className="absolute top-[18px] left-0 w-[2px] h-[12px] bg-[#ed4014]"></div>
-                    {renderStatus(item.status)}
-                    <div className="text-sm flex-1 ml-1">{item.name}</div>
-                    <Tooltip title={item.endTime} placement="right">
-                      <div>{item.diffTime}</div>
-                    </Tooltip>
+          <div className="mt-4">
+            {taskList.map((item) => {
+              return (
+                <div
+                  key={item.id}
+                  className="relative flex items-center p-3 mb-2 rounded-md cursor-pointer"
+                  onClick={() => {
+                    setCurrentTask(item)
+                    setVisible(true)
+                  }}
+                >
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <TaskSetting task={item} getTaskDetail={getTaskList}>
+                      <div
+                        className="w-4 h-4 cursor-pointer mr-3"
+                        style={{ border: '1px solid #eee' }}
+                        onClick={(e) => e.stopPropagation()}
+                      ></div>
+                    </TaskSetting>
                   </div>
-                )
-              })}
-            </div>
+                  <div className="absolute top-[18px] left-0 w-[2px] h-[12px] bg-[#ed4014]"></div>
+                  {renderStatus(item.status)}
+                  <div className="text-sm flex-1 ml-1">{item.name}</div>
+                  <Tooltip title={item.endTime} placement="right">
+                    <div>{item.diffTime}</div>
+                  </Tooltip>
+                </div>
+              )
+            })}
           </div>
         ) : null}
       </div>
