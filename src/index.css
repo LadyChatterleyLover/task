@@ -15,3 +15,7 @@ body,
 .ant-layout-sider {
   height: 100%;
 }
+
+.fc-event {
+  border: none;
+}

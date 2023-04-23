@@ -187,7 +187,7 @@ const ProjectTable = forwardRef((props: Props, ref) => {
       align: 'center',
       render: (_, record) => (
         <div className="flex items-center">
-          <div className="w-[45%] flex justify-end">
+          <div className="w-[45%] flex justify-end" onClick={(e) => e.stopPropagation()}>
             <TaskSetting task={record} clickItMenu={clickItMenu} />
           </div>
           <div className="ml-2 flex-1 flex justify-start">{record.name}</div>

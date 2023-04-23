@@ -27,8 +27,8 @@ const AddTask = (props: Props) => {
       .validateFields()
       .then(() => {
         const values = form.getFieldsValue()
-        const startTime = dayjs(values.time[0]).format('YYYY-MM-MM HH:mm:ss')
-        const endTime = dayjs(values.time[1]).format('YYYY-MM-MM HH:mm:ss')
+        const startTime = dayjs(values.time[0]).format('YYYY-MM-DD HH:mm:ss')
+        const endTime = dayjs(values.time[1]).format('YYYY-MM-DD HH:mm:ss')
         api.task
           .addTask({
             ...values,
@@ -41,6 +41,7 @@ const AddTask = (props: Props) => {
               message.success(res.msg)
               getProject(String(project.id))
               setVisible(false)
+              form.resetFields()
             } else {
               message.error(res.msg)
             }
@@ -59,7 +60,10 @@ const AddTask = (props: Props) => {
       title="添加任务"
       destroyOnClose
       onOk={addTask}
-      onCancel={() => setVisible(false)}
+      onCancel={() => {
+        form.resetFields()
+        setVisible(false)
+      }}
     >
       <Form form={form} initialValues={{ users: [user.id] }}>
         <Form.Item name="name" rules={[{ required: true, message: '任务名称不能为空' }]}>

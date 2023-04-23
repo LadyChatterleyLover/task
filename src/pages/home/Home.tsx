@@ -64,10 +64,10 @@ const Home = () => {
     if (diff > 0) {
       if (days >= 1) {
         return (
-          <div>
+          <Tag>
             {days !== 0 ? days + 'd,' : null}
             {hours}h
-          </div>
+          </Tag>
         )
       }
       return (
