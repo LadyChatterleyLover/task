@@ -6,6 +6,7 @@ import api from '../../api'
 import { TaskItem } from '../../types/task'
 import dayjs from 'dayjs'
 import { Tag, Tooltip } from 'antd'
+import TaskSetting from '../../components/project/TaskSetting'
 
 const Home = () => {
   const user = JSON.parse(localStorage.getItem('task-user') as string) as LoginUser['user']
@@ -158,6 +159,15 @@ const Home = () => {
                     key={item.id}
                     className="relative flex items-center p-3 mb-2 rounded-md cursor-pointer"
                   >
+                    <div>
+                      <TaskSetting task={item} getTaskDetail={getTaskList}>
+                        <div
+                          className="w-4 h-4 cursor-pointer mr-3"
+                          style={{ border: '1px solid #eee' }}
+                          onClick={(e) => e.stopPropagation()}
+                        ></div>
+                      </TaskSetting>
+                    </div>
                     <div className="absolute top-[18px] left-0 w-[2px] h-[12px] bg-[#ed4014]"></div>
                     {renderStatus(item.status)}
                     <div className="text-sm flex-1 ml-1">{item.name}</div>
@@ -180,6 +190,15 @@ const Home = () => {
                     key={item.id}
                     className="relative flex items-center p-3 mb-2 rounded-md cursor-pointer"
                   >
+                    <div>
+                      <TaskSetting task={item} getTaskDetail={getTaskList}>
+                        <div
+                          className="w-4 h-4 cursor-pointer mr-3"
+                          style={{ border: '1px solid #eee' }}
+                          onClick={(e) => e.stopPropagation()}
+                        ></div>
+                      </TaskSetting>
+                    </div>
                     <div className="absolute top-[18px] left-0 w-[2px] h-[12px] bg-[#ed4014]"></div>
                     {renderStatus(item.status)}
                     <div className="text-sm flex-1 ml-1">{item.name}</div>

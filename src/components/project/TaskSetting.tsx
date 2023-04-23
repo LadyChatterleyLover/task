@@ -1,15 +1,19 @@
-import React from 'react'
-import { Dropdown, MenuProps } from 'antd'
+import React, { ReactNode } from 'react'
+import { Dropdown, MenuProps, Modal, message } from 'antd'
 import { TaskItem } from '../../types/task'
-import { CheckOutlined, DeleteOutlined } from '@ant-design/icons'
+import { CheckOutlined, DeleteOutlined, ExclamationCircleFilled } from '@ant-design/icons'
+import api from '../../api'
 
 interface Props {
   task: TaskItem
-  clickItMenu: (val: string, task: TaskItem) => void
+  getTaskDetail: () => void
+  children: ReactNode
 }
 
+const { confirm } = Modal
+
 const Setting = (props: Props) => {
-  const { task, clickItMenu } = props
+  const { task, getTaskDetail, children } = props
   const items: MenuProps['items'] = [
     {
       key: '0',
@@ -161,17 +165,63 @@ const Setting = (props: Props) => {
     }
   ]
 
+  const clickItMenu = (key: string, task: TaskItem) => {
+    if (key.includes('#')) {
+      api.task
+        .updateTask(task.id, {
+          bgColor: key
+        })
+        .then((res) => {
+          if (res.code === 200) {
+            message.success(res.msg)
+            getTaskDetail()
+          } else {
+            message.error(res.msg)
+          }
+        })
+    } else if (key === 'del') {
+      confirm({
+        title: '删除任务',
+        icon: <ExclamationCircleFilled />,
+        content: `你确定要删除任务 【${task.name}】 吗?`,
+        okType: 'danger',
+        onOk() {
+          api.task.deleteTask(task.id).then((res) => {
+            if (res.code === 200) {
+              message.success(res.msg)
+              getTaskDetail()
+            } else {
+              message.error(res.msg)
+            }
+          })
+        },
+        onCancel() {
+          message.info('已取消删除')
+        }
+      })
+    } else {
+      api.task
+        .updateTask(task.id, {
+          status: +key
+        })
+        .then((res) => {
+          if (res.code === 200) {
+            message.success(res.msg)
+            getTaskDetail()
+          } else {
+            message.error(res.msg)
+          }
+        })
+    }
+  }
+
   const onClick: MenuProps['onClick'] = ({ key }) => {
     clickItMenu(key, task)
   }
 
   return (
     <Dropdown menu={{ items, onClick }} placement="top" arrow trigger={['click']}>
-      <div
-        className="w-4 h-4 rounded-full cursor-pointer"
-        style={{ border: '1px solid #eee' }}
-        onClick={(e) => e.stopPropagation()}
-      ></div>
+      {children}
     </Dropdown>
   )
 }

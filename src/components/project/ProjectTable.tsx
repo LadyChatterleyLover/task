@@ -6,11 +6,8 @@ import { TaskItem } from '../../types/task'
 import TaskSetting from './TaskSetting'
 import api from '../../api'
 import { LoginUser } from '../../api/modules/user/types'
-import { ExclamationCircleFilled } from '@ant-design/icons'
 import { useRandomColor } from '../../hooks/useRandomColor'
 import UpdateTask from './UpdateTask'
-
-const { confirm } = Modal
 
 interface Props {
   keyword: string
@@ -119,56 +116,6 @@ const ProjectTable = forwardRef((props: Props, ref) => {
     }
   }
 
-  const clickItMenu = (key: string, task: TaskItem) => {
-    if (key.includes('#')) {
-      api.task
-        .updateTask(task.id, {
-          bgColor: key
-        })
-        .then((res) => {
-          if (res.code === 200) {
-            message.success(res.msg)
-            getTaskDetail()
-          } else {
-            message.error(res.msg)
-          }
-        })
-    } else if (key === 'del') {
-      confirm({
-        title: '删除任务',
-        icon: <ExclamationCircleFilled />,
-        content: `你确定要删除任务 【${task.name}】 吗?`,
-        okType: 'danger',
-        onOk() {
-          api.task.deleteTask(task.id).then((res) => {
-            if (res.code === 200) {
-              message.success(res.msg)
-              getTaskDetail()
-            } else {
-              message.error(res.msg)
-            }
-          })
-        },
-        onCancel() {
-          message.info('已取消删除')
-        }
-      })
-    } else {
-      api.task
-        .updateTask(task.id, {
-          status: +key
-        })
-        .then((res) => {
-          if (res.code === 200) {
-            message.success(res.msg)
-            getTaskDetail()
-          } else {
-            message.error(res.msg)
-          }
-        })
-    }
-  }
-
   const rowClassName = (rocord: TaskItem) => {
     return `bg-[${rocord.bgColor}] cursor-pointer`
   }
@@ -188,7 +135,13 @@ const ProjectTable = forwardRef((props: Props, ref) => {
       render: (_, record) => (
         <div className="flex items-center">
           <div className="w-[45%] flex justify-end" onClick={(e) => e.stopPropagation()}>
-            <TaskSetting task={record} clickItMenu={clickItMenu} />
+            <TaskSetting task={record} getTaskDetail={getTaskDetail}>
+              <div
+                className="w-4 h-4 rounded-full cursor-pointer"
+                style={{ border: '1px solid #eee' }}
+                onClick={(e) => e.stopPropagation()}
+              ></div>
+            </TaskSetting>
           </div>
           <div className="ml-2 flex-1 flex justify-start">{record.name}</div>
         </div>
