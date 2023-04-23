@@ -1,5 +1,5 @@
 import { FileItem } from '../../../types/file'
-import { post, postFormData } from '../../request'
+import { patch, post, postFormData } from '../../request'
 
 export default {
   getFileList(params?: { user_id?: string; name?: string; dirId?: number | null }) {
@@ -13,5 +13,8 @@ export default {
   },
   patchDelete(params: { ids: number[] }) {
     return post('/file/patchDelete', params)
+  },
+  updateFile(id: number, params: Partial<FileItem>) {
+    return patch(`/file/${id}`, params)
   }
 }

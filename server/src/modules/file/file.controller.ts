@@ -6,6 +6,8 @@ import {
   UseGuards,
   Req,
   Body,
+  Param,
+  Patch,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { FileService } from './file.service'
@@ -64,5 +66,10 @@ export class FileController {
   @Post('patchDelete')
   async patchDelete(@Body() params: { ids: number[] }) {
     return this.fileService.patchDelete(params.ids)
+  }
+
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateTaskDto) {
+    return this.fileService.updateFile(+id, updateTaskDto)
   }
 }

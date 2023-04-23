@@ -9,6 +9,7 @@ import { Popover, Tag, Modal, message } from 'antd'
 import ReactDOM from 'react-dom/client'
 import { DeleteOutlined, ExclamationCircleFilled, ProfileOutlined } from '@ant-design/icons'
 import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
 import UpdateTask from '../../components/project/UpdateTask'
 
 const { confirm } = Modal
@@ -176,7 +177,11 @@ const Calendar = () => {
 
   return (
     <div className="p-5">
-      <FullCalendar plugins={[dayGridPlugin]} events={events} eventContent={eventContent} />
+      <FullCalendar
+        plugins={[dayGridPlugin, interactionPlugin]}
+        events={events}
+        eventContent={eventContent}
+      />
       <UpdateTask
         task={currentTask as TaskItem}
         visible={visible}

@@ -141,4 +141,32 @@ export class FileService {
       }
     }
   }
+
+  async updateFile(id: number, updateFileDto) {
+    const data = await this.fileRepository.findOne({
+      where: {
+        id,
+      },
+    })
+    const newData = Object.assign(data, { ...updateFileDto })
+    if (updateFileDto.users && updateFileDto.users.length) {
+      const users = await this.userRepository
+        .createQueryBuilder('user')
+        .whereInIds(updateFileDto.users)
+        .getMany()
+      newData.users = users
+    }
+    const res = await this.fileRepository.save(newData)
+    if (res) {
+      return {
+        code: 200,
+        msg: '修改成功',
+      }
+    } else {
+      return {
+        code: 500,
+        msg: '修改失败',
+      }
+    }
+  }
 }

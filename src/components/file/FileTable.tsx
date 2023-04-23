@@ -1,6 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Table, Checkbox, Empty, Image, TableColumnProps, Tag, Modal, message } from 'antd'
+import {
+  Table,
+  Checkbox,
+  Empty,
+  Image,
+  TableColumnProps,
+  Tag,
+  Modal,
+  message,
+  Dropdown,
+  MenuProps,
+  Form,
+  Input
+} from 'antd'
 import {
   DeleteOutlined,
   ExclamationCircleFilled,
@@ -13,6 +26,7 @@ import { CheckboxChangeEvent } from 'antd/es/checkbox'
 import api from '../../api'
 import dayjs from 'dayjs'
 import cloneDeep from 'lodash-es/cloneDeep'
+import { useCopy } from '../../hooks/useCopy'
 
 const { confirm } = Modal
 interface Props {
@@ -24,11 +38,17 @@ const FileTable = (props: Props) => {
   const { fileList, changeMyFile } = props
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+
   const [myChecked, setMyChecked] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [dirName, setDirName] = useState('')
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [cloneFileList, setCloneFileList] = useState<FileItem[]>([])
+  const [currentFile, setCurrentFile] = useState<FileItem>()
+  const [visible, setVisible] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false)
+
+  const [form] = Form.useForm()
 
   const iconList = [
     {
@@ -135,15 +155,15 @@ const FileTable = (props: Props) => {
     changeMyFile(checked)
   }
 
-  const deleleFile = () => {
+  const deleleFile = (content: string, ids: number[]) => {
     confirm({
       title: `删除文件`,
       icon: <ExclamationCircleFilled />,
-      content: `您确定删除${selectedRowKeys.length}个文件吗?`,
+      content,
       onOk() {
         api.file
           .patchDelete({
-            ids: selectedRowKeys as number[]
+            ids
           })
           .then((res) => {
             if (res.code === 200) {
@@ -172,6 +192,118 @@ const FileTable = (props: Props) => {
     }
     setSelectedRowKeys(arr)
     setCloneFileList([...cloneFileList])
+  }
+
+  const items: MenuProps['items'] = [
+    {
+      key: '1',
+      label: `打开 "${currentFile?.name}"`
+    },
+    {
+      key: '2',
+      label: `${currentFile?.checked ? '取消选择' : '选择'}`
+    },
+    {
+      type: 'divider'
+    },
+    {
+      key: '3',
+      label: `重命名`
+    },
+    {
+      type: 'divider'
+    },
+    {
+      key: '4',
+      label: `发送`,
+      disabled: currentFile?.isDir
+    },
+    {
+      key: '5',
+      label: `复制链接`,
+      disabled: currentFile?.isDir
+    },
+    {
+      key: '6',
+      label: `下载`,
+      disabled: currentFile?.isDir
+    },
+    {
+      type: 'divider'
+    },
+    {
+      key: '7',
+      label: `删除`,
+      danger: true
+    }
+  ]
+
+  const clickMenu: MenuProps['onClick'] = ({ key }) => {
+    if (key === '1') {
+      if (currentFile?.isDir) {
+        navigate(`/file/dir?id=${currentFile.id}&name=${currentFile.name}`)
+      } else {
+        setVisible(true)
+      }
+    }
+    if (key === '2') {
+      let arr: React.Key[] = [...selectedRowKeys]
+      ;(currentFile as FileItem).checked = !currentFile?.checked
+      if (currentFile?.checked) {
+        arr.push(currentFile?.id)
+      } else {
+        arr = arr.filter((i) => i !== currentFile?.id)
+      }
+      setSelectedRowKeys(arr)
+    }
+    if (key === '3') {
+      form.setFieldValue(
+        'name',
+        currentFile?.isDir ? currentFile?.name : currentFile?.name.split('.').slice(0, -1)
+      )
+      setModalVisible(true)
+    }
+    if (key === '4') {
+      //
+    }
+    if (key === '5') {
+      const { copy } = useCopy(currentFile?.url as string, () => message.success('复制成功'))
+      copy()
+    }
+    if (key === '6') {
+      window.open(currentFile?.url)
+    }
+    if (key === '7') {
+      deleleFile(`您确定删除${currentFile?.name}吗?`, [currentFile?.id as number])
+    }
+  }
+
+  const rename = () => {
+    form
+      .validateFields()
+      .then(() => {
+        api.file
+          .updateFile(currentFile?.id as number, {
+            name: form.getFieldValue('name') + '.' + currentFile?.ext
+          })
+          .then((res) => {
+            if (res.code === 200) {
+              message.success(res.msg)
+              form.resetFields()
+              setModalVisible(false)
+              changeMyFile(myChecked)
+            } else {
+              message.error(res.msg)
+            }
+          })
+          .catch(() => {
+            form.resetFields()
+            setModalVisible(false)
+          })
+      })
+      .catch(() => {
+        message.error('表单填写有误,请检查')
+      })
   }
 
   useEffect(() => {
@@ -207,7 +339,16 @@ const FileTable = (props: Props) => {
           {selectedRowKeys.length ? (
             <>
               <span className="ml-2 cursor-pointer">
-                <Tag color="red" icon={<DeleteOutlined />} onClick={deleleFile}>
+                <Tag
+                  color="red"
+                  icon={<DeleteOutlined />}
+                  onClick={() =>
+                    deleleFile(
+                      `您确定删除${selectedRowKeys.length}个文件吗?`,
+                      selectedRowKeys as number[]
+                    )
+                  }
+                >
                   删除
                 </Tag>
               </span>
@@ -273,8 +414,20 @@ const FileTable = (props: Props) => {
                             onChange={(e) => changeFileChecked(e, item)}
                           ></Checkbox>
                         </div>
-                        <div className="absolute top-0 right-2">
-                          <MoreOutlined style={{ color: '#aaa', transform: 'rotate(90deg)' }} />
+                        <div
+                          className="absolute top-0 right-2"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setCurrentFile(item)
+                          }}
+                        >
+                          <Dropdown
+                            menu={{ items, onClick: clickMenu }}
+                            placement="bottom"
+                            trigger={['click']}
+                          >
+                            <MoreOutlined style={{ color: '#aaa', transform: 'rotate(90deg)' }} />
+                          </Dropdown>
                         </div>
                       </>
                     ) : null}
@@ -299,6 +452,43 @@ const FileTable = (props: Props) => {
           </div>
         )}
       </div>
+      {currentFile ? (
+        <Image
+          style={{ display: 'none' }}
+          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png?x-oss-process=image/blur,r_50,s_50/quality,q_1/resize,m_mfit,h_200,w_200"
+          preview={{
+            visible,
+            src: currentFile.url,
+            onVisibleChange: (value) => {
+              setVisible(value)
+            }
+          }}
+        />
+      ) : null}
+      <Modal
+        title="重命名"
+        open={modalVisible}
+        destroyOnClose
+        maskClosable={false}
+        onOk={rename}
+        onCancel={() => {
+          setModalVisible(false)
+          form.resetFields()
+        }}
+      >
+        <Form form={form}>
+          <Form.Item
+            label="文件名"
+            name="name"
+            rules={[
+              { required: true, message: '文件名不能为空' },
+              { min: 2, message: '文件名至少为2个字符' }
+            ]}
+          >
+            <Input placeholder="请输入" allowClear />
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   )
 }
