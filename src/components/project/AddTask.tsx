@@ -68,10 +68,10 @@ const AddTask = (props: Props) => {
     >
       <Form form={form} initialValues={{ users: [user.id] }}>
         <Form.Item name="name" rules={[{ required: true, message: '任务名称不能为空' }]}>
-          <Input placeholder="任务名称" allowClear />
+          <Input placeholder="任务名称" allowClear autoComplete="off" />
         </Form.Item>
         <Form.Item name="desc" rules={[{ required: true, message: '任务描述不能为空' }]}>
-          <Input placeholder="任务描述" allowClear />
+          <Input placeholder="任务描述" allowClear autoComplete="off" />
         </Form.Item>
         {project && project.users && project.users.length ? (
           <Form.Item name="users">

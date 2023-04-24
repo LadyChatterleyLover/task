@@ -2,13 +2,13 @@ import axios, { ResponseType } from 'axios'
 import { message } from 'antd'
 
 const service = axios.create({
-  baseURL: 'http://localhost:8888',
+  baseURL: 'http://localhost:7001',
   timeout: 10000
 })
 
 service.interceptors.request.use(
   (config) => {
-    config.headers!['Authorization'] = localStorage.getItem('task-token')
+    config.headers['Authorization'] = localStorage.getItem('task-token')
     return config
   },
   (error) => {
