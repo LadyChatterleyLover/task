@@ -27,10 +27,10 @@ export default {
   oss: {
     // normal oss bucket
     client: {
-      accessKeyId: 'LTAIX30SSLbiVE9J',
-      accessKeySecret: 'ZIcnc8kgZKpa6nkOuaEaKFKmLj8W1g',
-      bucket: 'lp-disk',
-      endpoint: 'oss-cn-chengdu.aliyuncs.com',
+      accessKeyId: process.env.OSS_ACCESSKEYID,
+      accessKeySecret: process.env.OSS_ACCESSKEYSECRET,
+      bucket: process.env.OSS_BUCKET,
+      endpoint: process.env.OSS_ENDPOINT,
       timeout: '60s',
     },
   },
