@@ -2,11 +2,11 @@ import { Button, Input } from 'antd'
 import React, { useEffect, useState } from 'react'
 import io from 'socket.io-client'
 
-const socket = io('http://localhost:6379', {
-  path: '/socketio',
-  transports: ['websocket'],
-  secure: true
-})
+// const socket = io('http://localhost:6379', {
+//   path: '/socketio',
+//   transports: ['websocket'],
+//   secure: true
+// })
 
 interface Message {
   id: string
@@ -18,20 +18,20 @@ const Message = () => {
   const [id, setId] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
 
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('连接成功')
-    })
-    socket.on('connection', (data: Message) => {
-      setId(data.id)
-    })
-    socket.on('disconnect', () => {
-      console.log('退出连接')
-    })
-    socket.on('data', (data) => {
-      setMessages([...data])
-    })
-  }, [])
+  // useEffect(() => {
+  //   socket.on('connect', () => {
+  //     console.log('连接成功')
+  //   })
+  //   socket.on('connection', (data: Message) => {
+  //     setId(data.id)
+  //   })
+  //   socket.on('disconnect', () => {
+  //     console.log('退出连接')
+  //   })
+  //   socket.on('data', (data) => {
+  //     setMessages([...data])
+  //   })
+  // }, [])
 
   const handleSendMessage = () => {
     socket.emit('data', message)

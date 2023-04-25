@@ -1,12 +1,12 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Patch,
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common'
 import { TaskService } from './task.service'
 import { TaskDto } from './dto/task.dto'
@@ -18,8 +18,11 @@ export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
-  async create(@Body() createTaskDto: TaskDto) {
-    return await this.taskService.create(createTaskDto)
+  async create(@Body() createTaskDto: TaskDto, @Req() req) {
+    return await this.taskService.create({
+      ...createTaskDto,
+      users: [...(createTaskDto.users = []), req.user.id],
+    })
   }
 
   @Post('list')
@@ -51,7 +54,6 @@ export class TaskController {
   ) {
     return this.taskService.findOne(
       params.projectId,
-      params.userId,
       params.current,
       params.size,
       params.keyword,

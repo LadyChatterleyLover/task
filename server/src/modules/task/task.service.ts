@@ -78,13 +78,7 @@ export class TaskService {
     }
   }
 
-  async findOne(
-    projectId: number,
-    userId: number,
-    current = 1,
-    size = 5,
-    keyword = '',
-  ) {
+  async findOne(projectId: number, current = 1, size = 5, keyword = '') {
     const data = await this.taskRepository
       .createQueryBuilder('task')
       .leftJoinAndSelect('task.project', 'project')

@@ -85,7 +85,7 @@ export class UserService {
     }
   }
 
-  async findByIds(ids: string[]) {
+  async findByIds(ids: string[] = []) {
     const res = await this.usersRepository
       .createQueryBuilder('user')
       .whereInIds(ids.map((item) => +item))

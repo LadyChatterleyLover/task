@@ -2,7 +2,7 @@ import axios, { ResponseType } from 'axios'
 import { message } from 'antd'
 
 const service = axios.create({
-  baseURL: 'http://localhost:7001',
+  baseURL: 'http://localhost:8888',
   timeout: 10000
 })
 
