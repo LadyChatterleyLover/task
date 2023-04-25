@@ -9,7 +9,7 @@ import { ProjectModule } from './modules/project/project.module'
 import { TaskModule } from './modules/task/task.module'
 import { AuthModule } from './modules/auth/auth.module'
 import { FileModule } from './modules/file/file.module'
-import { ChatGateway } from './modules/chat/ChatGateway'
+import { MessageModule } from './modules/message/message.module'
 
 @Module({
   imports: [
@@ -36,6 +36,7 @@ import { ChatGateway } from './modules/chat/ChatGateway'
     TaskModule,
     AuthModule,
     FileModule,
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

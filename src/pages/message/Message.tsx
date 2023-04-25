@@ -2,11 +2,14 @@ import { Button, Input } from 'antd'
 import React, { useEffect, useState } from 'react'
 import io from 'socket.io-client'
 
-// const socket = io('http://localhost:6379', {
-//   path: '/socketio',
-//   transports: ['websocket'],
-//   secure: true
-// })
+const socket = io('http://localhost:8888', {
+  path: '/socket',
+  transports: ['websocket'],
+  secure: true,
+  query: {
+    authorization: localStorage.getItem('task-token')
+  }
+})
 
 interface Message {
   id: string
@@ -18,23 +21,24 @@ const Message = () => {
   const [id, setId] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
 
-  // useEffect(() => {
-  //   socket.on('connect', () => {
-  //     console.log('连接成功')
-  //   })
-  //   socket.on('connection', (data: Message) => {
-  //     setId(data.id)
-  //   })
-  //   socket.on('disconnect', () => {
-  //     console.log('退出连接')
-  //   })
-  //   socket.on('data', (data) => {
-  //     setMessages([...data])
-  //   })
-  // }, [])
+  useEffect(() => {
+    socket.on('enter', (data) => {
+      setId(data.id)
+      console.log('连接成功', data)
+    })
+    socket.on('leave', () => {
+      setId('')
+      setMessages([])
+      console.log('退出连接')
+    })
+    socket.on('message', (data) => {
+      console.log('data', data)
+      // setMessages([...data])
+    })
+  }, [])
 
   const handleSendMessage = () => {
-    socket.emit('data', message)
+    socket.emit('message', message)
     setMessage('')
   }
 

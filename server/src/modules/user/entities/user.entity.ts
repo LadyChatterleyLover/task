@@ -11,6 +11,7 @@ import {
 import { Exclude } from 'class-transformer'
 import { File } from 'src/modules/file/entities/file.entity'
 import { Project } from 'src/modules/project/entities/project.entity'
+import { Message } from 'src/modules/message/entities/message.entity'
 
 @Entity()
 export class User {
@@ -44,6 +45,9 @@ export class User {
 
   @OneToMany(() => File, (file) => file.user)
   file: File[]
+
+  @OneToMany(() => Message, (message) => message.user)
+  messages: Message[]
 
   @CreateDateColumn()
   createAt: Date
