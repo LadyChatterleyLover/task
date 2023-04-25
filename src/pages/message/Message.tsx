@@ -1,6 +1,7 @@
 import { Button, Input } from 'antd'
 import React, { useEffect, useState } from 'react'
 import io from 'socket.io-client'
+import { LoginUser } from '../../api/modules/user/types'
 
 const socket = io('http://localhost:8888', {
   path: '/socket',
@@ -12,28 +13,28 @@ const socket = io('http://localhost:8888', {
 })
 
 interface Message {
-  id: string
-  data: string
+  id: number
+  user: LoginUser['user']
+  content: string
 }
 
 const Message = () => {
   const [message, setMessage] = useState('')
-  const [id, setId] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
+  const user: LoginUser['user'] = JSON.parse(localStorage.getItem('task-user') as string)
 
   useEffect(() => {
     socket.on('enter', (data) => {
-      setId(data.id)
+      setMessages(data.messages)
       console.log('连接成功', data)
     })
     socket.on('leave', () => {
-      setId('')
       setMessages([])
       console.log('退出连接')
     })
     socket.on('message', (data) => {
       console.log('data', data)
-      // setMessages([...data])
+      setMessages([...data])
     })
   }, [])
 
@@ -49,10 +50,10 @@ const Message = () => {
           <li
             key={index}
             style={{
-              textAlign: id === message.id ? 'left' : 'right'
+              textAlign: user.id === message.user.id ? 'left' : 'right'
             }}
           >
-            {message.data}
+            {message.content}
           </li>
         ))}
       </ul>

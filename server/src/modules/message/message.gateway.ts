@@ -47,8 +47,10 @@ export class MessageGateway
 
   async handleConnection(client: Socket) {
     const user = await this.getUser(client)
+    const messages = await this.messageService.getMessageList()
     this.ws.emit('enter', {
       user,
+      messages,
     })
   }
 
